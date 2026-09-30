@@ -740,3 +740,110 @@ body {
 .analise-textarea { min-height: 48px; border-color: var(--borda); }
 .table > :not(caption) > * > * { padding-top: 1rem; padding-bottom: 1rem; }
 @media (max-width: 767.98px) { .analise-busca { max-width: none; } }
+
+
+/* =========================================
+   COMPATIBILIDADE - LOGIN SIMPLES
+   Regras do segundo estilo incorporadas sem
+   afetar as demais páginas do sistema.
+========================================= */
+
+/* Mantém o gradiente original do login */
+.login-container {
+    display: grid;
+    place-items: center;
+}
+
+/* Card simples de login */
+.login-container .card {
+    width: min(92%, 430px);
+    padding: 36px;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 22px 55px rgba(4, 25, 13, 0.28);
+}
+
+/* Tipografia do conteúdo do login simples */
+.login-container .card h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+}
+
+.login-container .card p {
+    margin: 0 0 28px;
+    color: var(--texto-secundario);
+}
+
+.login-container .card label {
+    display: block;
+    margin: 16px 0 7px;
+    font-weight: 700;
+}
+
+/* Inputs do login simples */
+.login-container .card input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    font-size: 16px;
+    color: var(--texto);
+    background: #fff;
+}
+
+.login-container .card input:focus {
+    outline: 2px solid rgba(130, 211, 156, 0.45);
+    border-color: var(--verde);
+}
+
+/* Botão do login simples */
+.login-container .card button {
+    width: 100%;
+    margin-top: 26px;
+    padding: 13px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--verde);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.login-container .card button:hover {
+    background: var(--verde-hover);
+}
+
+.login-container .card button:active {
+    transform: scale(0.99);
+}
+
+/* =========================================
+   PADRÃO GERAL DE ELEMENTOS
+   Complementa o Bootstrap sem sobrescrever
+   componentes fora das telas do sistema.
+========================================= */
+
+.btn-success {
+    background-color: var(--verde);
+    border-color: var(--verde);
+}
+
+.btn-success:hover,
+.btn-success:focus {
+    background-color: var(--verde-hover);
+    border-color: var(--verde-hover);
+}
+
+.text-success {
+    color: var(--verde) !important;
+}
+
+.bg-success {
+    background-color: var(--verde) !important;
+}
+
+.border-success {
+    border-color: var(--verde) !important;
+}

@@ -20,7 +20,7 @@
                 <h2 id="tituloLogin" class="h4 mb-1">Acesse sua conta</h2>
                 <p class="text-secondary small mb-0">Entre com seu usuário e senha.</p>
             </div>
-            <form id="loginForm">
+            <form id="loginForm" action="../../backend/auth/login.php" method="get">
                 <div class="mb-3">
                     <label for="usuario" class="form-label">Usuário</label>
                     <div class="input-group">
@@ -41,7 +41,7 @@
                     <span id="textoBotao">Entrar</span>
                     <span id="loading" class="spinner-border spinner-border-sm d-none"></span>
                 </button>
-                <div class="text-center"><a class="auth-link" href="../criar-login/">Criar acesso inicial</a></div>
+                <div class="text-center"><a class="auth-link" href="criar_login.html">Criar acesso inicial</a></div>
             </form>
             <div class="text-center mt-4"><small class="text-secondary">Sistema interno • AgroStock</small></div>
         </section>

@@ -42,7 +42,7 @@ if (loginForm) {
         mensagemErro.classList.add('d-none');
 
         try {
-            const response = await apiFetch('auth/login.php', {
+            const response = await apiFetch('../../backend/auth/login.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
