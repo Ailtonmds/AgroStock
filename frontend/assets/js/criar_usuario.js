@@ -33,7 +33,7 @@ if (form) {
         mensagemSucesso.classList.add('d-none');
         
         try {
-            const response = await apiFetch('./criar_usuario.php', {
+            const response = await apiFetch('../criar-login/criar_usuario.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nome, usuario, senha, nivel_acesso })
@@ -45,7 +45,7 @@ if (form) {
                 mostrarSucesso(data.mensagem);
                 form.reset();
                 setTimeout(() => {
-                    window.location.href = '../login/';
+                    window.location.href = 'index.html';
                 }, 2000);
             } else {
                 mostrarErro(data.mensagem);

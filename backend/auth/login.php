@@ -4,8 +4,8 @@
  * Retorna JSON para comunicação via fetch()
  */
 
-require_once __DIR__ . '../config/conexao.php';
-require_once __DIR__ . '../config/config.php';
+require_once __DIR__ . '/../config/conexao.php';
+require_once __DIR__ . '/../config/config.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);

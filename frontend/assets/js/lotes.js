@@ -225,9 +225,9 @@ async function excluirLote(id, numero) {
 async function logout() {
     try {
         await apiFetch('auth/logout.php', { method: 'POST' });
-        window.location.href = '../login/';
+        window.location.href = 'index.html';
     } catch (e) {
-        window.location.href = '../login/';
+        window.location.href = 'index.html';
     }
 }
 

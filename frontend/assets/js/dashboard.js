@@ -9,9 +9,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('btnLogout').addEventListener('click', async () => {
         try {
             await apiFetch('auth/logout.php', { method: 'POST' });
-            window.location.href = '../login/';
+            window.location.href = 'index.html';
         } catch (e) {
-            window.location.href = '../login/';
+            window.location.href = 'index.html';
         }
     });
 });

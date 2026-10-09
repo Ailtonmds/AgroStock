@@ -42,7 +42,7 @@ if (loginForm) {
         mensagemErro.classList.add('d-none');
 
         try {
-            const response = await apiFetch('../../backend/auth/login.php', {
+            const response = await apiFetch('auth/login.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -56,7 +56,7 @@ if (loginForm) {
                 sessionStorage.setItem('usuario_id', String(data.dados?.id || ''));
                 sessionStorage.setItem('usuario_nome', data.dados?.nome || data.dados?.usuario || 'Usuário');
                 sessionStorage.setItem('nivel_acesso', data.dados?.nivel_acesso || 'operador');
-                window.location.href = '../dashboard/';
+                window.location.href = 'dashboard.html';
             } else {
                 mensagemErro.textContent = data.mensagem || 'Erro ao fazer login.';
                 mensagemErro.classList.remove('d-none');

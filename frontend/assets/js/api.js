@@ -22,7 +22,7 @@
     }
 
     function loginUrl() {
-        return new URL('../login/', document.baseURI).href;
+        return new URL('index.html', document.baseURI).href;
     }
 
     window.apiUrl = resolveApiUrl;
