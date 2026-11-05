@@ -1,814 +1,140 @@
 /* =========================================
-   CONFIGURAÇÕES
+   AgroStock — Estilo Profissional
+   Cores, tipografia, componentes e utilitários
 ========================================= */
 
 :root {
-    --verde: #246b3a;
-    --verde-escuro: #123d24;
-    --verde-hover: #1b542d;
-    --verde-claro: #82d39c;
+    /* Cores primárias (verde identidade) */
+    --verde: #1e7a46;
+    --verde-escuro: #14532d;
+    --verde-hover: #157347;
+    --verde-claro: #d1f7e0;
+    --verde-suave: #eaf7ef;
 
-    --fundo: #f5f7f5;
-    --borda: #dfe4df;
-    --texto: #303730;
-    --texto-secundario: #69736b;
+    /* Cores de estado */
+    --azul: #0d6efd;
+    --vermelho: #dc3545;
+    --amarelo: #ffc107;
+    --cinza-claro: #f8f9fa;
+    --cinza-borda: #dee2e6;
+    --texto: #212529;
+    --texto-secundario: #6c757d;
+
+    /* Espaçamentos e bordas */
+    --raio-card: 12px;
+    --sombra-card: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --sombra-hover: 0 8px 24px rgba(0, 0, 0, 0.10);
+    --transicao: all 0.25s ease;
 }
 
-
 /* =========================================
-   RESET
+   RESET E BASE
 ========================================= */
-
 * {
     box-sizing: border-box;
 }
 
-
-/* =========================================
-   BODY
-========================================= */
+html {
+    scroll-behavior: smooth;
+}
 
 body {
     font-family:
-        Inter,
+        'Inter',
         -apple-system,
         BlinkMacSystemFont,
-        "Segoe UI",
+        'Segoe UI',
+        Roboto,
+        'Helvetica Neue',
         Arial,
         sans-serif;
-
-    background: var(--fundo);
-
+    background: var(--cinza-claro);
     color: var(--texto);
+    font-size: 0.95rem;
+    line-height: 1.5;
 }
 
+a {
+    color: var(--verde);
+    text-decoration: none;
+    transition: var(--transicao);
+}
+
+a:hover {
+    color: var(--verde-escuro);
+}
 
 /* =========================================
    LOGIN
 ========================================= */
-
 .login-container {
     min-height: 100vh;
-
     padding: 20px;
-
     background:
-        linear-gradient(
-            135deg,
-            #0c2817,
-            #164a2b
-        );
-}
-
-
-/* =========================================
-   LADO ESQUERDO
-   Mantido caso você volte para o
-   layout dividido do login
-========================================= */
-
-.login-info {
-    position: relative;
-
-    overflow: hidden;
-
-    background:
-        linear-gradient(
-            145deg,
-            #0c2817,
-            #164a2b,
-            #0c2516
-        );
-}
-
-
-/* =========================================
-   CÍRCULOS DECORATIVOS
-========================================= */
-
-.login-info::before {
-    content: "";
-
-    position: absolute;
-
-    width: 500px;
-    height: 500px;
-
-    border-radius: 50%;
-
-    background: rgba(255, 255, 255, 0.035);
-
-    top: -220px;
-    right: -220px;
-}
-
-
-.login-info::after {
-    content: "";
-
-    position: absolute;
-
-    width: 350px;
-    height: 350px;
-
-    border-radius: 50%;
-
-    border: 1px solid rgba(255, 255, 255, 0.05);
-
-    bottom: -180px;
-    left: -120px;
-}
-
-
-/* =========================================
-   LOGO
-========================================= */
-
-.brand-icon {
-    width: 48px;
-    height: 48px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 12px;
-
-    background: rgba(255, 255, 255, 0.12);
-
-    border: 1px solid rgba(255, 255, 255, 0.18);
-
-    color: white;
-
-    font-size: 14px;
-
-    font-weight: 800;
-
-    letter-spacing: 1px;
-}
-
-
-.brand-name {
-    color: white;
-
-    font-size: 21px;
-
-    font-weight: 700;
-}
-
-
-/* =========================================
-   TAG
-========================================= */
-
-.tag {
-    color: var(--verde-claro);
-
-    font-size: 11px;
-
-    font-weight: 700;
-
-    letter-spacing: 2px;
-}
-
-
-/* =========================================
-   TEXTO VERDE
-========================================= */
-
-.text-green {
-    color: var(--verde-claro);
-}
-
-
-.text-green-dark {
-    color: var(--verde);
-}
-
-
-/* =========================================
-   ÍCONES DOS RECURSOS
-========================================= */
-
-.feature-icon {
-    width: 32px;
-    height: 32px;
-
-    flex-shrink: 0;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: rgba(130, 211, 156, 0.14);
-
-    color: var(--verde-claro);
-}
-
-
-/* =========================================
-   LOGIN SECTION
-========================================= */
-
-.login-section {
-    background: #f8faf8;
-
-    padding: 40px;
-}
-
-
-.login-card {
-    width: 100%;
-
-    max-width: 430px;
-
-    padding: 36px;
-    border: 1px solid rgba(255, 255, 255, 0.32);
-    border-radius: 18px;
-    background: #fff;
-    box-shadow: 0 22px 55px rgba(4, 25, 13, 0.28);
-}
-
-
-.logo {
-    width: 6em;
-    height: 6em;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
-    border-radius: 14px;
-    background: var(--verde);
-    color: #fff;
-    font-size: 17px;
-    font-weight: 800;
-    letter-spacing: 1px;
-}
-
-.brand {
-    margin: 0;
-    color: var(--verde-escuro);
-    font-size: 26px;
-    font-weight: 800;
-}
-
-.subtitle {
-    margin: 4px 0 0;
-    color: var(--texto-secundario);
-    font-size: 14px;
-}
-
-.auth-link {
-    display: inline-block;
-    margin-top: 16px;
-    color: var(--verde);
-    font-size: 14px;
-    font-weight: 700;
-    text-decoration: none;
-}
-
-.auth-link:hover {
-    color: var(--verde-hover);
-    text-decoration: underline;
-}
-
-
-/* =========================================
-   CABEÇALHO DO LOGIN
-========================================= */
-
-.welcome {
-    color: var(--verde);
-
-    font-size: 11px;
-
-    font-weight: 800;
-
-    letter-spacing: 2px;
-}
-
-
-/* =========================================
-   INPUTS
-========================================= */
-
-.input-group-text {
-    background: white;
-
-    border-color: var(--borda);
-
-    color: #8b938c;
-}
-
-
-.form-control {
-    height: 52px;
-
-    border-color: var(--borda);
-}
-
-
-.form-control:focus {
-    border-color: var(--verde);
-
-    box-shadow:
-        0 0 0 0.2rem rgba(36, 107, 58, 0.10);
-}
-
-
-/* =========================================
-   BOTÃO LOGIN
-========================================= */
-
-.btn-login {
-    height: 52px;
-
-    background: var(--verde);
-
-    border-color: var(--verde);
-
-    color: white;
-
-    font-weight: 700;
-
-    transition: 0.2s;
-}
-
-
-.btn-login:hover {
-    background: var(--verde-hover);
-
-    border-color: var(--verde-hover);
-
-    color: white;
-}
-
-
-.btn-login:active {
-    transform: scale(0.99);
-}
-
-
-/* =========================================
-   BOTÃO MOSTRAR SENHA
-========================================= */
-
-#mostrarSenha {
-    border-color: var(--borda);
-
-    color: #6c756e;
-}
-
-
-#mostrarSenha:hover {
-    background: #f1f4f1;
-
-    color: var(--verde);
-}
-
-
-/* =========================================
-   CADASTRO DE PRODUTOS
-========================================= */
-
-.agro-navbar {
-    background: var(--verde-escuro);
-}
-
-
-/* =========================================
-   LOGO DA NAVBAR
-========================================= */
-
-.navbar-logo {
-    width: 38px;
-    height: 38px;
-
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 9px;
-
-    background: rgba(255, 255, 255, 0.12);
-
-    border: 1px solid rgba(255, 255, 255, 0.15);
-
-    color: white;
-
-    font-size: 12px;
-
-    font-weight: 800;
-
-    letter-spacing: 1px;
-}
-
-
-.navbar-brand {
-    font-weight: 700;
-}
-
-
-/* =========================================
-   NAVBAR
-========================================= */
-
-.navbar .nav-link {
-    color: rgba(255, 255, 255, 0.7);
-
-    font-size: 14px;
-
-    padding-left: 14px !important;
-
-    padding-right: 14px !important;
-}
-
-
-.navbar .nav-link:hover {
-    color: white;
-}
-
-
-.navbar .nav-link.active {
-    color: white;
-}
-
-
-/* =========================================
-   CARD DE CADASTRO
-========================================= */
-
-.cadastro-card {
-    border-radius: 14px;
-}
-
-
-/* =========================================
-   ÍCONE DA SEÇÃO DO FORMULÁRIO
-========================================= */
-
-.form-section-icon {
-    width: 44px;
-    height: 44px;
-
-    flex-shrink: 0;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 10px;
-
-    background: rgba(36, 107, 58, 0.1);
-
-    color: var(--verde);
-
-    font-size: 20px;
-}
-
-
-/* =========================================
-   INPUTS DO CADASTRO
-========================================= */
-
-.cadastro-card .form-control,
-.cadastro-card .form-select {
-    min-height: 48px;
-
-    border-color: var(--borda);
-}
-
-
-.cadastro-card .input-group-text {
-    min-width: 45px;
-
-    justify-content: center;
-
-    background: #f8faf8;
-
-    border-color: var(--borda);
-
-    color: var(--texto-secundario);
-}
-
-
-/* =========================================
-   FOCO DOS INPUTS DO CADASTRO
-========================================= */
-
-.cadastro-card .form-control:focus,
-.cadastro-card .form-select:focus {
-    border-color: var(--verde);
-
-    box-shadow:
-        0 0 0 0.2rem rgba(36, 107, 58, 0.10);
-}
-
-
-/* =========================================
-   LABEL DO CADASTRO
-========================================= */
-
-.cadastro-card .form-label {
-    color: var(--texto);
-
-    font-size: 13px;
-}
-
-
-/* =========================================
-   TEXTO AUXILIAR
-========================================= */
-
-.cadastro-card .form-text {
-    font-size: 12px;
-
-    color: #89918a;
-}
-
-
-/* =========================================
-   BOTÃO DE CADASTRO
-========================================= */
-
-.cadastro-card .btn-success {
-    background: var(--verde);
-
-    border-color: var(--verde);
-}
-
-
-.cadastro-card .btn-success:hover {
-    background: var(--verde-hover);
-
-    border-color: var(--verde-hover);
-}
-
-
-/* =========================================
-   RESPONSIVIDADE DO LOGIN
-========================================= */
-
-@media (max-width: 991.98px) {
-
-    .login-section {
-        min-height: 100vh;
-
-        padding: 25px;
-    }
-
-}
-
-
-/* =========================================
-   RESPONSIVIDADE DO LOGIN
-========================================= */
-
-@media (max-width: 480px) {
-
-    .login-container {
-        padding: 15px;
-    }
-
-
-    .login-section {
-        padding: 20px;
-    }
-
-
-    .login-card {
-        max-width: 100%;
-
-        padding: 28px 22px;
-    }
-
-}
-
-
-/* =========================================
-   RESPONSIVIDADE DO CADASTRO
-========================================= */
-
-@media (max-width: 575.98px) {
-
-    .cadastro-card .card-body {
-        padding: 25px !important;
-    }
-
-}
-
-
-/* =========================================
-   DASHBOARD
-========================================= */
-
-.dashboard-primary-action {
-    background: var(--verde);
-    border-color: var(--verde);
-    font-weight: 600;
-}
-
-
-.dashboard-primary-action:hover {
-    background: var(--verde-hover);
-    border-color: var(--verde-hover);
-}
-
-
-.dashboard-stat-card,
-.dashboard-card {
-    border-radius: 14px;
-}
-
-
-.dashboard-stat-card {
-    border-top: 3px solid rgba(36, 107, 58, 0.18) !important;
-}
-
-
-.dashboard-stat-icon {
-    width: 44px;
-    height: 44px;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 10px;
-
-    background: rgba(36, 107, 58, 0.10);
-
-    color: var(--verde);
-    font-size: 20px;
-}
-
-
-.dashboard-stat-icon.warning {
-    background: rgba(178, 116, 11, 0.12);
-    color: #a66a08;
-}
-
-
-.dashboard-stat-icon.danger {
-    background: rgba(180, 55, 55, 0.10);
-    color: #a33a3a;
-}
-
-
-.dashboard-empty-state {
-    border: 1px dashed var(--borda);
-    border-radius: 12px;
-}
-
-
-.dashboard-empty-state > i {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 48px;
-    height: 48px;
-
-    margin-bottom: 12px;
-
-    border-radius: 50%;
-
-    background: rgba(36, 107, 58, 0.10);
-
-    color: var(--verde);
-    font-size: 22px;
-}
-
-
-.dashboard-quick-link {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    padding: 13px;
-
-    border: 1px solid var(--borda);
-    border-radius: 10px;
-
-    color: var(--texto);
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-
-    transition: 0.2s ease;
-}
-
-
-.dashboard-quick-link > span:first-child {
-    width: 34px;
-    height: 34px;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 8px;
-
-    background: rgba(36, 107, 58, 0.10);
-
-    color: var(--verde);
-    font-size: 17px;
-}
-
-
-.dashboard-quick-link > .bi-chevron-right {
-    color: var(--texto-secundario);
-    font-size: 12px;
-}
-
-
-.dashboard-quick-link:hover {
-    border-color: rgba(36, 107, 58, 0.4);
-    background: #f8faf8;
-    color: var(--verde);
-    transform: translateX(2px);
-}
-
-/* ANÁLISES */
-.analise-busca { max-width: 310px; }
-.analise-textarea { min-height: 48px; border-color: var(--borda); }
-.table > :not(caption) > * > * { padding-top: 1rem; padding-bottom: 1rem; }
-@media (max-width: 767.98px) { .analise-busca { max-width: none; } }
-
-
-/* =========================================
-   COMPATIBILIDADE - LOGIN SIMPLES
-   Regras do segundo estilo incorporadas sem
-   afetar as demais páginas do sistema.
-========================================= */
-
-/* Mantém o gradiente original do login */
-.login-container {
+        linear-gradient(135deg, #0c2817 0%, #164a2b 50%, #0c2516 100%);
     display: grid;
     place-items: center;
 }
 
-/* Card simples de login */
 .login-container .card {
     width: min(92%, 430px);
-    padding: 36px;
-    border-radius: 18px;
+    padding: 40px;
+    border-radius: 20px;
     background: #fff;
-    box-shadow: 0 22px 55px rgba(4, 25, 13, 0.28);
+    box-shadow: 0 24px 60px rgba(4, 25, 13, 0.30);
+    border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-/* Tipografia do conteúdo do login simples */
 .login-container .card h1 {
-    margin: 0 0 8px;
-    font-size: 28px;
+    margin: 0 0 6px;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
 }
 
 .login-container .card p {
-    margin: 0 0 28px;
+    margin: 0 0 30px;
     color: var(--texto-secundario);
+    font-size: 15px;
 }
 
 .login-container .card label {
     display: block;
-    margin: 16px 0 7px;
+    margin: 18px 0 7px;
     font-weight: 700;
+    font-size: 14px;
+    color: var(--texto);
 }
 
-/* Inputs do login simples */
 .login-container .card input {
     width: 100%;
-    padding: 12px;
-    border: 1px solid var(--borda);
-    border-radius: 8px;
+    padding: 12px 14px;
+    border: 1px solid var(--cinza-borda);
+    border-radius: 10px;
     font-size: 16px;
     color: var(--texto);
     background: #fff;
+    transition: var(--transicao);
 }
 
 .login-container .card input:focus {
-    outline: 2px solid rgba(130, 211, 156, 0.45);
+    outline: none;
     border-color: var(--verde);
+    box-shadow: 0 0 0 4px rgba(30, 122, 70, 0.12);
 }
 
-/* Botão do login simples */
 .login-container .card button {
     width: 100%;
-    margin-top: 26px;
-    padding: 13px;
+    margin-top: 28px;
+    padding: 14px;
     border: 0;
-    border-radius: 8px;
+    border-radius: 10px;
     background: var(--verde);
     color: #fff;
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.1s ease;
+    transition: var(--transicao);
 }
 
 .login-container .card button:hover {
@@ -819,31 +145,533 @@ body {
     transform: scale(0.99);
 }
 
+.login-container .card button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.login-container .text-center a {
+    color: var(--verde);
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.login-container .text-center a:hover {
+    text-decoration: underline;
+}
+
+.login-container .auth-link {
+    color: var(--verde);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.login-container .auth-link:hover {
+    text-decoration: underline;
+}
+
+.login-container .logo {
+    width: 56px;
+    height: 56px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    border-radius: 14px;
+    background: var(--verde);
+    color: #fff;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.login-container .brand {
+    margin: 0;
+    color: var(--verde-escuro);
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.login-container .subtitle {
+    margin: 4px 0 0;
+    color: var(--texto-secundario);
+    font-size: 14px;
+}
+
 /* =========================================
-   PADRÃO GERAL DE ELEMENTOS
-   Complementa o Bootstrap sem sobrescrever
-   componentes fora das telas do sistema.
+   NAVBAR (sistema)
 ========================================= */
+.agro-navbar {
+    background: var(--verde-escuro);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.navbar-logo {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: #fff !important;
+}
+
+.navbar .nav-link {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 14.5px;
+    font-weight: 500;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    border-radius: 8px;
+    margin: 2px 0;
+    transition: var(--transicao);
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.10);
+}
+
+.navbar .nav-link.active {
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.navbar .nav-link i {
+    font-size: 1.15rem;
+}
+
+.navbar .btn-link {
+    padding: 0;
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.navbar .btn-link:hover {
+    color: #fff !important;
+    background: transparent;
+}
+
+/* =========================================
+   HEADER DE PÁGINA
+========================================= */
+.page-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.page-header .badge-pagina {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--verde);
+    background: var(--verde-suave);
+    padding: 0.35em 0.8em;
+    border-radius: 50px;
+    display: inline-block;
+}
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin: 0;
+    color: var(--texto);
+    letter-spacing: -0.5px;
+}
+
+.page-header p {
+    margin: 0;
+    color: var(--texto-secundario);
+    font-size: 0.95rem;
+}
+
+/* =========================================
+   CARDS E TABELAS
+========================================= */
+.card {
+    border: none;
+    border-radius: var(--raio-card);
+    box-shadow: var(--sombra-card);
+    transition: var(--transicao);
+    background: #fff;
+}
+
+.card:hover {
+    box-shadow: var(--sombra-hover);
+}
+
+.card.border-0 {
+    border: none !important;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.table {
+    font-size: 0.9rem;
+    color: var(--texto);
+    vertical-align: middle;
+}
+
+.table thead th {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--texto-secundario);
+    border-bottom: 2px solid var(--cinza-borda);
+    padding: 1rem 0.75rem;
+    background: var(--cinza-claro);
+}
+
+.table tbody td {
+    padding: 1rem 0.75rem;
+    border-bottom: 1px solid var(--cinza-borda);
+}
+
+.table tbody tr:hover {
+    background: var(--verde-suave);
+    transition: var(--transicao);
+}
+
+.table-hover tbody tr:hover td {
+    background: var(--verde-suave);
+}
+
+.badge {
+    font-weight: 600;
+    font-size: 0.78rem;
+    padding: 0.45em 0.7em;
+    border-radius: 6px;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.55rem 1.1rem;
+    transition: var(--transicao);
+}
+
+.btn i {
+    font-size: 0.95em;
+}
+
+.btn-sm {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.82rem;
+    border-radius: 6px;
+}
 
 .btn-success {
-    background-color: var(--verde);
+    background: var(--verde);
     border-color: var(--verde);
 }
 
-.btn-success:hover,
-.btn-success:focus {
-    background-color: var(--verde-hover);
+.btn-success:hover {
+    background: var(--verde-hover);
     border-color: var(--verde-hover);
 }
 
-.text-success {
-    color: var(--verde) !important;
+.btn-outline-secondary {
+    border-radius: 8px;
 }
 
-.bg-success {
-    background-color: var(--verde) !important;
+.btn-outline-danger,
+.btn-outline-primary,
+.btn-outline-success,
+.btn-outline-warning,
+.btn-outline-info {
+    border-radius: 8px;
 }
 
-.border-success {
-    border-color: var(--verde) !important;
+.form-control {
+    height: 48px;
+    border: 1px solid var(--cinza-borda);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    transition: var(--transicao);
+}
+
+.form-control:focus {
+    border-color: var(--verde);
+    box-shadow: 0 0 0 4px rgba(30, 122, 70, 0.12);
+    outline: none;
+}
+
+.form-select {
+    height: 48px;
+    border: 1px solid var(--cinza-borda);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    transition: var(--transicao);
+}
+
+.form-select:focus {
+    border-color: var(--verde);
+    box-shadow: 0 0 0 4px rgba(30, 122, 70, 0.12);
+    outline: none;
+}
+
+.input-group-text {
+    background: var(--cinza-claro);
+    border: 1px solid var(--cinza-borda);
+    border-radius: 10px 0 0 10px;
+    color: var(--texto-secundario);
+    font-size: 0.95rem;
+}
+
+.form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--texto);
+    margin-bottom: 0.4rem;
+}
+
+.form-text {
+    font-size: 0.8rem;
+    color: var(--texto-secundario);
+}
+
+.form-check-label {
+    font-size: 0.92rem;
+    font-weight: 500;
+}
+
+/* =========================================
+   MODAIS
+========================================= */
+.modal-content {
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--cinza-borda);
+    padding: 1rem 1.25rem;
+}
+
+.modal-title {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--texto);
+}
+
+.modal-body {
+    padding: 1.25rem;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--cinza-borda);
+    padding: 1rem 1.25rem;
+}
+
+/* =========================================
+   DASHBOARD — CARDS DE ESTATÍSTICA
+========================================= */
+.dashboard-stat-card {
+    border-radius: var(--raio-card);
+    border: none !important;
+    box-shadow: var(--sombra-card);
+    transition: var(--transicao);
+    height: 100%;
+    background: #fff;
+}
+
+.dashboard-stat-card:hover {
+    box-shadow: var(--sombra-hover);
+    transform: translateY(-2px);
+}
+
+.dashboard-stat-card .card-body {
+    padding: 1.5rem;
+}
+
+.dashboard-stat-icon {
+    width: 46px;
+    height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.dashboard-stat-card .text-secondary {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.35rem;
+    display: block;
+}
+
+.dashboard-stat-card .display-6 {
+    font-size: 1.9rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+/* =========================================
+   ESTADO VAZIO / CARREGANDO
+========================================= */
+.dashboard-empty-state,
+.estado-vazio-card {
+    border: 1px dashed var(--cinza-borda);
+    border-radius: var(--raio-card);
+    background: #fff;
+}
+
+.empty-icon {
+    width: 64px;
+    height: 64px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--verde-suave);
+    color: var(--verde);
+    font-size: 28px;
+    margin-bottom: 16px;
+    display: block;
+}
+
+/* =========================================
+   LINKS RÁPIDOS
+========================================= */
+.dashboard-quick-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1rem;
+    border: 1px solid var(--cinza-borda);
+    border-radius: 10px;
+    color: var(--texto);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transicao);
+    background: #fff;
+}
+
+.dashboard-quick-link > span:first-child {
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: var(--verde-suave);
+    color: var(--verde);
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.dashboard-quick-link:hover {
+    border-color: rgba(30, 122, 70, 0.4);
+    background: var(--verde-suave);
+    color: var(--verde-escuro);
+    transform: translateX(4px);
+}
+
+/* =========================================
+   TOAST
+========================================= */
+.toast {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    backdrop-filter: blur(8px);
+}
+
+.toast-body {
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+
+/* =========================================
+   PAGINAÇÃO
+========================================= */
+.pagination .page-link {
+    border: 1px solid var(--cinza-borda);
+    color: var(--texto);
+    border-radius: 8px;
+    margin: 0 3px;
+    padding: 0.5rem 0.85rem;
+}
+
+.pagination .page-link:hover {
+    background: var(--verde-suave);
+    border-color: var(--verde);
+    color: var(--verde-escuro);
+}
+
+.pagination .page-item.active .page-link {
+    background: var(--verde);
+    border-color: var(--verde);
+    color: #fff;
+}
+
+/* =========================================
+   RESPONSIVIDADE
+========================================= */
+@media (max-width: 991.98px) {
+    main.container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    body {
+        font-size: 0.9rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.4rem;
+    }
+
+    .dashboard-stat-card .display-6 {
+        font-size: 1.5rem;
+    }
+
+    .login-container .card {
+        padding: 30px 22px;
+        width: min(95%, 400px);
+    }
+}
+
+/* =========================================
+   UTILITÁRIOS DE TEXTO / BACKGROUND
+========================================= */
+.text-verde { color: var(--verde) !important; }
+.bg-verde-suave { background-color: var(--verde-suave) !important; }
+.shadow-suave { box-shadow: var(--sombra-card) !important; }
+
+.table-responsive {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Garante que cards dentro de tabs não tenham margem estranha */
+.tab-content .card {
+    margin-bottom: 0;
 }

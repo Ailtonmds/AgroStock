@@ -2,10 +2,10 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     carregarCategorias();
-    
+
     document.getElementById('btnLogout').addEventListener('click', logout);
     document.getElementById('formCategoria').addEventListener('submit', salvarCategoria);
-    
+
     document.getElementById('modalCategoria').addEventListener('hidden.bs.modal', () => {
         document.getElementById('formCategoria').reset();
         document.getElementById('categoriaId').value = '';
@@ -15,30 +15,64 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function carregarCategorias() {
+    const tbody = document.getElementById('tbodyCategorias');
+
     try {
+        estadoCarregando(tbody, 4);
+
         const response = await apiFetch('categorias/listar.php');
         const data = await apiJson(response);
-        
-        const tbody = document.querySelector('#tabelaCategorias tbody');
-        
+
         if (!data.sucesso || !data.dados || data.dados.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-secondary py-4">Nenhuma categoria encontrada</td></tr>';
+            estadoVazio(tbody, 4, 'Nenhuma categoria encontrada');
             return;
         }
-        
-        tbody.innerHTML = data.dados.map(c => `
-            <tr>
-                <td><strong>${c.nome}</strong></td>
-                <td>${c.descricao || '-'}</td>
-                <td><span class="badge ${c.ativo ? 'bg-success' : 'bg-secondary'}">${c.ativo ? 'Ativa' : 'Inativa'}</span></td>
-                <td class="text-end">
-                    <button class="btn btn-sm btn-outline-primary" onclick="editarCategoria(${c.id})" title="Editar"><i class="bi bi-pencil"></i></button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="excluirCategoria(${c.id}, '${c.nome}')" title="Excluir"><i class="bi bi-trash"></i></button>
-                </td>
-            </tr>
-        `).join('');
+
+        tbody.innerHTML = '';
+        data.dados.forEach(c => {
+            const tr = document.createElement('tr');
+
+            const nomeCelula = document.createElement('td');
+            nomeCelula.innerHTML = `<strong>${escapeHtml(c.nome)}</strong>`;
+
+            const statusSpan = document.createElement('span');
+            statusSpan.className = `badge ${c.ativo ? 'bg-success' : 'bg-secondary'}`;
+            statusSpan.textContent = c.ativo ? 'Ativa' : 'Inativa';
+
+            tr.appendChild(nomeCelula);
+            tr.appendChild(montarCelula(c.descricao || '-'));
+            tr.appendChild(montarCelula('', 'text-center')).appendChild(statusSpan);
+
+            const tdAcoes = document.createElement('td');
+            tdAcoes.className = 'text-end';
+
+            const btnEditar = document.createElement('button');
+            btnEditar.className = 'btn btn-sm btn-outline-primary me-1';
+            btnEditar.title = 'Editar';
+            btnEditar.innerHTML = '<i class="bi bi-pencil"></i>';
+            btnEditar.addEventListener('click', () => editarCategoria(Number(c.id)));
+
+            const btnExcluir = document.createElement('button');
+            btnExcluir.className = 'btn btn-sm btn-outline-danger';
+            btnExcluir.title = 'Excluir';
+            btnExcluir.innerHTML = '<i class="bi bi-trash"></i>';
+            btnExcluir.addEventListener('click', async () => {
+                const confirmado = await confirmar(
+                    'Excluir categoria',
+                    `Tem certeza que deseja excluir a categoria "${escapeHtml(c.nome)}"?`
+                );
+                if (confirmado) await excluirCategoria(Number(c.id));
+            });
+
+            tdAcoes.appendChild(btnEditar);
+            tdAcoes.appendChild(btnExcluir);
+            tr.appendChild(tdAcoes);
+
+            tbody.appendChild(tr);
+        });
     } catch (e) {
         console.error('Erro ao carregar categorias:', e);
+        estadoErro(tbody, 4, 'Erro ao carregar categorias. Verifique a conexão e tente novamente.', carregarCategorias);
     }
 }
 
@@ -54,53 +88,60 @@ async function editarCategoria(id) {
     try {
         const response = await apiFetch('categorias/listar.php');
         const data = await apiJson(response);
-        
-        if (!data.sucesso) return;
-        
-        const categoria = data.dados.find(c => c.id === id);
-        if (!categoria) return;
-        
+
+        if (!data.sucesso) {
+            mostrarToast('Erro ao carregar dados da categoria.', 'danger');
+            return;
+        }
+
+        const categoria = data.dados.find(c => Number(c.id) === Number(id));
+        if (!categoria) {
+            mostrarToast('Categoria não encontrada.', 'danger');
+            return;
+        }
+
         document.getElementById('categoriaId').value = categoria.id;
         document.getElementById('nome').value = categoria.nome;
         document.getElementById('descricao').value = categoria.descricao || '';
-        document.getElementById('ativo').checked = categoria.ativo;
-        
+        document.getElementById('ativo').checked = categoria.ativo === 1 || categoria.ativo === true;
+
         document.getElementById('modalCategoriaLabel').textContent = 'Editar Categoria';
         document.getElementById('btnSalvarCategoria').innerHTML = '<i class="bi bi-check-lg me-1"></i>Atualizar';
-        
+
         const modal = new bootstrap.Modal(document.getElementById('modalCategoria'));
         modal.show();
     } catch (e) {
         console.error('Erro ao carregar categoria:', e);
+        mostrarToast('Erro ao carregar categoria.', 'danger');
     }
 }
 
 async function salvarCategoria(e) {
     e.preventDefault();
-    
+
     const id = document.getElementById('categoriaId').value;
     const isEdit = id !== '';
-    
+
     const formData = new FormData(e.target);
     const dados = Object.fromEntries(formData.entries());
     dados.ativo = dados.ativo === 'on' ? 1 : 0;
-    
+
     const url = isEdit ? 'categorias/editar.php' : 'categorias/cadastrar.php';
-    
+
     const btn = document.getElementById('btnSalvarCategoria');
     const originalText = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Salvando...';
-    
+
     try {
         const response = await apiFetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dados)
         });
-        
+
         const result = await apiJson(response);
-        
+
         if (result.sucesso) {
             bootstrap.Modal.getInstance(document.getElementById('modalCategoria')).hide();
             carregarCategorias();
@@ -116,21 +157,19 @@ async function salvarCategoria(e) {
     }
 }
 
-async function excluirCategoria(id, nome) {
-    if (!confirm(`Tem certeza que deseja excluir a categoria "${nome}"?`)) return;
-    
+async function excluirCategoria(id) {
     try {
         const response = await apiFetch('categorias/excluir.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id })
         });
-        
+
         const result = await apiJson(response);
-        
+
         if (result.sucesso) {
             carregarCategorias();
-            mostrarToast(result.mensagem, 'success');
+            mostrarToast(result.mensagem || 'Categoria excluída com sucesso!', 'success');
         } else {
             mostrarToast(result.mensagem, 'danger');
         }
@@ -140,36 +179,9 @@ async function excluirCategoria(id, nome) {
 }
 
 async function logout() {
-    try {
-        await apiFetch('auth/logout.php', { method: 'POST' });
-        window.location.href = 'index.html';
-    } catch (e) {
-        window.location.href = 'index.html';
-    }
+    await window.logout();
 }
 
 function mostrarToast(mensagem, tipo = 'info') {
-    const toastContainer = document.getElementById('toastContainer') || criarToastContainer();
-    const toast = document.createElement('div');
-    toast.className = `toast align-items-center text-white bg-${tipo} border-0`;
-    toast.setAttribute('role', 'alert');
-    toast.innerHTML = `
-        <div class="d-flex">
-            <div class="toast-body">${mensagem}</div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-    `;
-    toastContainer.appendChild(toast);
-    const bsToast = new bootstrap.Toast(toast, { delay: 3000 });
-    bsToast.show();
-    toast.addEventListener('hidden.bs.toast', () => toast.remove());
-}
-
-function criarToastContainer() {
-    const container = document.createElement('div');
-    container.id = 'toastContainer';
-    container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-    container.style.zIndex = '9999';
-    document.body.appendChild(container);
-    return container;
+    window.mostrarToast(mensagem, tipo);
 }

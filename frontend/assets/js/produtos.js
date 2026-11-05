@@ -6,10 +6,20 @@ let categoriasCache = [];
 document.addEventListener('DOMContentLoaded', () => {
     carregarCategorias();
     carregarProdutos();
-    
+
     document.getElementById('btnLogout').addEventListener('click', logout);
     document.getElementById('formProduto').addEventListener('submit', salvarProduto);
-    
+    document.getElementById('btnBuscar').addEventListener('click', carregarProdutos);
+    document.getElementById('btnLimparBusca').addEventListener('click', () => {
+        document.getElementById('buscaProduto').value = '';
+        document.getElementById('filtroCategoria').value = '';
+        document.getElementById('filtroStatus').value = '';
+        carregarProdutos();
+    });
+    document.getElementById('filtroCategoria').addEventListener('change', carregarProdutos);
+    document.getElementById('filtroStatus').addEventListener('change', carregarProdutos);
+    document.getElementById('buscaProduto').addEventListener('input', debounceBusca);
+
     // Limpar formulário ao fechar modal
     document.getElementById('modalProduto').addEventListener('hidden.bs.modal', () => {
         document.getElementById('formProduto').reset();
@@ -26,20 +36,23 @@ async function carregarCategorias() {
         if (data.sucesso) {
             categoriasCache = data.dados;
             popularSelectCategorias();
+        } else {
+            mostrarToast('Erro ao carregar categorias.', 'danger');
         }
     } catch (e) {
         console.error('Erro ao carregar categorias:', e);
+        mostrarToast('Erro ao carregar categorias.', 'danger');
     }
 }
 
 function popularSelectCategorias() {
     const selectCategoria = document.getElementById('categoria_id');
     const selectFiltro = document.getElementById('filtroCategoria');
-    
-    const options = categoriasCache.filter(c => c.ativo).map(c => 
-        `<option value="${c.id}">${c.nome}</option>`
+
+    const options = categoriasCache.filter(c => c.ativo).map(c =>
+        `<option value="${escapeHtml(c.id)}">${escapeHtml(c.nome)}</option>`
     ).join('');
-    
+
     selectCategoria.innerHTML = '<option value="">Selecione</option>' + options;
     selectFiltro.innerHTML = '<option value="">Todas as categorias</option>' + options;
 }
@@ -50,45 +63,80 @@ function debounceBusca() {
 }
 
 async function carregarProdutos() {
-    const busca = document.getElementById('buscaProduto').value;
+    const busca = document.getElementById('buscaProduto').value.trim();
     const categoria_id = document.getElementById('filtroCategoria').value;
     const ativo = document.getElementById('filtroStatus').value;
-    
+
     let url = 'produtos/listar.php?';
     const params = new URLSearchParams();
     if (busca) params.append('busca', busca);
     if (categoria_id) params.append('categoria_id', categoria_id);
     if (ativo !== '') params.append('ativo', ativo);
     url += params.toString();
-    
+
+    const tbody = document.getElementById('tbodyProdutos');
+
     try {
+        estadoCarregando(tbody, 8);
+
         const response = await apiFetch(url);
         const data = await apiJson(response);
-        
-        const tbody = document.querySelector('#tabelaProdutos tbody');
-        
+
         if (!data.sucesso || !data.dados || data.dados.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" class="text-center text-secondary py-4">Nenhum produto encontrado</td></tr>';
+            estadoVazio(tbody, 8, 'Nenhum produto encontrado');
             return;
         }
-        
-        tbody.innerHTML = data.dados.map(p => `
-            <tr>
-                <td><strong>${p.nome}</strong><br><small class="text-secondary">${p.descricao || ''}</small></td>
-                <td>${p.categoria_nome}</td>
-                <td>${p.unidade_medida}</td>
-                <td>${p.estoque_minimo}</td>
-                <td>${p.quantidade_total}</td>
-                <td>${p.localizacao || '-'}</td>
-                <td><span class="badge ${p.ativo ? 'bg-success' : 'bg-secondary'}">${p.ativo ? 'Ativo' : 'Inativo'}</span></td>
-                <td class="text-end">
-                    <button class="btn btn-sm btn-outline-primary" onclick="editarProduto(${p.id})" title="Editar"><i class="bi bi-pencil"></i></button>
-                    <button class="btn btn-sm btn-outline-danger" onclick="excluirProduto(${p.id}, '${p.nome}')" title="Excluir"><i class="bi bi-trash"></i></button>
-                </td>
-            </tr>
-        `).join('');
+
+        tbody.innerHTML = '';
+        data.dados.forEach(p => {
+            const tr = document.createElement('tr');
+
+            const statusSpan = document.createElement('span');
+            statusSpan.className = `badge ${p.ativo ? 'bg-success' : 'bg-secondary'}`;
+            statusSpan.textContent = p.ativo ? 'Ativo' : 'Inativo';
+
+            const nomeCelula = document.createElement('td');
+            nomeCelula.innerHTML = `<strong>${escapeHtml(p.nome)}</strong><br><small class="text-secondary">${escapeHtml(p.descricao || '')}</small>`;
+
+            tr.appendChild(nomeCelula);
+            tr.appendChild(montarCelula(p.categoria_nome));
+            tr.appendChild(montarCelula(p.unidade_medida));
+            tr.appendChild(montarCelula(p.estoque_minimo));
+            tr.appendChild(montarCelula(p.quantidade_total));
+            tr.appendChild(montarCelula(p.localizacao || '-'));
+            tr.appendChild(montarCelula('', 'text-center')).appendChild(statusSpan);
+
+            // Ações
+            const tdAcoes = document.createElement('td');
+            tdAcoes.className = 'text-end';
+
+            const btnEditar = document.createElement('button');
+            btnEditar.className = 'btn btn-sm btn-outline-primary me-1';
+            btnEditar.title = 'Editar';
+            btnEditar.innerHTML = '<i class="bi bi-pencil"></i>';
+            btnEditar.addEventListener('click', () => editarProduto(Number(p.id)));
+
+            const btnExcluir = document.createElement('button');
+            btnExcluir.className = 'btn btn-sm btn-outline-danger';
+            btnExcluir.title = 'Excluir';
+            btnExcluir.innerHTML = '<i class="bi bi-trash"></i>';
+            btnExcluir.addEventListener('click', async () => {
+                const confirmado = await confirmar(
+                    'Excluir produto',
+                    `Tem certeza que deseja excluir o produto "${escapeHtml(p.nome)}"?`
+                );
+                if (confirmado) await excluirProduto(Number(p.id));
+            });
+
+            tdAcoes.appendChild(btnEditar);
+            tdAcoes.appendChild(btnExcluir);
+            tr.appendChild(tdAcoes);
+
+            tbody.appendChild(tr);
+        });
     } catch (e) {
         console.error('Erro ao carregar produtos:', e);
+        estadoErro(tbody, 8, 'Erro ao carregar produtos. Verifique a conexão e tente novamente.', carregarProdutos);
     }
 }
 
@@ -104,12 +152,18 @@ async function editarProduto(id) {
     try {
         const response = await apiFetch('produtos/listar.php');
         const data = await apiJson(response);
-        
-        if (!data.sucesso) return;
-        
+
+        if (!data.sucesso) {
+            mostrarToast('Erro ao carregar dados do produto.', 'danger');
+            return;
+        }
+
         const produto = data.dados.find(p => Number(p.id) === Number(id));
-        if (!produto) return;
-        
+        if (!produto) {
+            mostrarToast('Produto não encontrado.', 'danger');
+            return;
+        }
+
         document.getElementById('produtoId').value = produto.id;
         document.getElementById('nome').value = produto.nome;
         document.getElementById('descricao').value = produto.descricao || '';
@@ -117,46 +171,47 @@ async function editarProduto(id) {
         document.getElementById('unidade_medida').value = produto.unidade_medida;
         document.getElementById('estoque_minimo').value = produto.estoque_minimo;
         document.getElementById('localizacao').value = produto.localizacao || '';
-        document.getElementById('ativo').checked = produto.ativo;
-        
+        document.getElementById('ativo').checked = produto.ativo === 1 || produto.ativo === true;
+
         document.getElementById('modalProdutoLabel').textContent = 'Editar Produto';
         document.getElementById('btnSalvarProduto').innerHTML = '<i class="bi bi-check-lg me-1"></i>Atualizar';
-        
+
         const modal = new bootstrap.Modal(document.getElementById('modalProduto'));
         modal.show();
     } catch (e) {
         console.error('Erro ao carregar produto:', e);
+        mostrarToast('Erro ao carregar produto.', 'danger');
     }
 }
 
 async function salvarProduto(e) {
     e.preventDefault();
-    
+
     const id = document.getElementById('produtoId').value;
     const isEdit = id !== '';
-    
+
     const formData = new FormData(e.target);
     const dados = Object.fromEntries(formData.entries());
     dados.ativo = dados.ativo === 'on' ? 1 : 0;
     dados.estoque_minimo = parseInt(dados.estoque_minimo) || 0;
     dados.categoria_id = parseInt(dados.categoria_id);
-    
+
     const url = isEdit ? 'produtos/editar.php' : 'produtos/cadastrar.php';
-    
+
     const btn = document.getElementById('btnSalvarProduto');
     const originalText = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Salvando...';
-    
+
     try {
         const response = await apiFetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dados)
         });
-        
+
         const result = await apiJson(response);
-        
+
         if (result.sucesso) {
             bootstrap.Modal.getInstance(document.getElementById('modalProduto')).hide();
             carregarProdutos();
@@ -172,21 +227,19 @@ async function salvarProduto(e) {
     }
 }
 
-async function excluirProduto(id, nome) {
-    if (!confirm(`Tem certeza que deseja excluir/desativar o produto "${nome}"?`)) return;
-    
+async function excluirProduto(id) {
     try {
         const response = await apiFetch('produtos/excluir.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id })
         });
-        
+
         const result = await apiJson(response);
-        
+
         if (result.sucesso) {
             carregarProdutos();
-            mostrarToast(result.mensagem, 'success');
+            mostrarToast(result.mensagem || 'Produto excluído com sucesso!', 'success');
         } else {
             mostrarToast(result.mensagem, 'danger');
         }
@@ -196,36 +249,9 @@ async function excluirProduto(id, nome) {
 }
 
 async function logout() {
-    try {
-        await apiFetch('auth/logout.php', { method: 'POST' });
-        window.location.href = 'index.html';
-    } catch (e) {
-        window.location.href = 'index.html';
-    }
+    await window.logout();
 }
 
 function mostrarToast(mensagem, tipo = 'info') {
-    const toastContainer = document.getElementById('toastContainer') || criarToastContainer();
-    const toast = document.createElement('div');
-    toast.className = `toast align-items-center text-white bg-${tipo} border-0`;
-    toast.setAttribute('role', 'alert');
-    toast.innerHTML = `
-        <div class="d-flex">
-            <div class="toast-body">${mensagem}</div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-    `;
-    toastContainer.appendChild(toast);
-    const bsToast = new bootstrap.Toast(toast, { delay: 3000 });
-    bsToast.show();
-    toast.addEventListener('hidden.bs.toast', () => toast.remove());
-}
-
-function criarToastContainer() {
-    const container = document.createElement('div');
-    container.id = 'toastContainer';
-    container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-    container.style.zIndex = '9999';
-    document.body.appendChild(container);
-    return container;
+    window.mostrarToast(mensagem, tipo);
 }

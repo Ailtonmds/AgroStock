@@ -56,6 +56,7 @@
             try {
                 data = JSON.parse(text);
             } catch (error) {
+                // Resposta não-JSON mesmo com status 200 é considerada falha
                 data = {
                     sucesso: false,
                     mensagem: response.status === 404
@@ -69,11 +70,16 @@
             data = {};
         }
 
+        // Se o corpo não foi um JSON válido, marca como falha independentemente do status
+        const corpoJsonValido = text && (() => {
+            try { JSON.parse(text); return true; } catch { return false; }
+        })();
+
         if (typeof data.sucesso !== 'boolean') {
-            data.sucesso = response.ok;
+            data.sucesso = response.ok && corpoJsonValido;
         }
 
-        if (!response.ok) {
+        if (!response.ok || !corpoJsonValido) {
             data.sucesso = false;
             data.mensagem = data.mensagem || `Erro ${response.status} ao acessar o servidor.`;
         }

@@ -10,37 +10,37 @@ const mensagemSucesso = document.getElementById('mensagemSucesso');
 if (form) {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
+
         const nome = document.getElementById('nome').value.trim();
         const usuario = document.getElementById('usuario').value.trim();
         const senha = document.getElementById('senha').value;
         const nivel_acesso = document.getElementById('nivel_acesso').value;
-        
+
         if (!nome || !usuario || !senha) {
             mostrarErro('Preencha todos os campos obrigatórios.');
             return;
         }
-        
+
         if (senha.length < 6) {
             mostrarErro('A senha deve ter pelo menos 6 caracteres.');
             return;
         }
-        
+
         btnCriar.disabled = true;
         textoBotao.textContent = 'Criando...';
         loading.classList.remove('d-none');
         mensagemErro.classList.add('d-none');
         mensagemSucesso.classList.add('d-none');
-        
+
         try {
             const response = await apiFetch('../criar-login/criar_usuario.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nome, usuario, senha, nivel_acesso })
             });
-            
+
             const data = await apiJson(response);
-            
+
             if (data.sucesso) {
                 mostrarSucesso(data.mensagem);
                 form.reset();

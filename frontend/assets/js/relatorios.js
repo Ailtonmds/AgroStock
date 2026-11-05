@@ -9,19 +9,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const hoje = new Date();
     const trintaDiasAtras = new Date();
     trintaDiasAtras.setDate(hoje.getDate() - 30);
-    
+
     document.getElementById('rel_data_fim').value = formatarDataInput(hoje);
     document.getElementById('rel_data_inicio').value = formatarDataInput(trintaDiasAtras);
-    
+
     carregarProdutosParaFiltros();
     carregarRelatorios();
-    
+
     document.getElementById('btnLogout').addEventListener('click', logout);
+    document.getElementById('btnAtualizarRelatorios').addEventListener('click', carregarRelatorios);
     document.getElementById('formFiltroMov').addEventListener('submit', (e) => {
         e.preventDefault();
         carregarRelMovimentacoes();
     });
-    
+    document.getElementById('btnAplicarFiltroValidade').addEventListener('click', carregarRelValidade);
+
     // Carregar relatório quando a aba for ativada
     document.querySelectorAll('#relatoriosTabs button[data-bs-toggle="tab"]').forEach(tab => {
         tab.addEventListener('shown.bs.tab', (e) => {
@@ -39,11 +41,12 @@ async function carregarProdutosParaFiltros() {
         const data = await apiJson(response);
         if (data.sucesso) {
             produtosCache = data.dados;
-            const options = produtosCache.map(p => `<option value="${p.id}">${p.nome}</option>`).join('');
+            const options = produtosCache.map(p => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.nome)}</option>`).join('');
             document.getElementById('rel_produto_id').innerHTML = '<option value="">Todos</option>' + options;
         }
     } catch (e) {
         console.error('Erro ao carregar produtos:', e);
+        mostrarToast('Erro ao carregar produtos para filtro.', 'danger');
     }
 }
 
@@ -59,25 +62,29 @@ async function carregarRelEstoque() {
     try {
         const response = await apiFetch('relatorios/estoque.php');
         const data = await apiJson(response);
-        
+
         if (data.sucesso) {
             atualizarTabelaRelEstoque(data.dados.produtos);
             atualizarGraficosRelEstoque(data.dados.resumo_por_categoria, data.dados.produtos);
+        } else {
+            mostrarToast('Erro ao carregar relatório de estoque.', 'danger');
         }
     } catch (e) {
         console.error('Erro ao carregar relatório de estoque:', e);
+        mostrarToast('Erro ao carregar relatório de estoque.', 'danger');
     }
 }
 
 function atualizarTabelaRelEstoque(produtos) {
-    const tbody = document.querySelector('#tabelaRelEstoque tbody');
-    
+    const tbody = document.getElementById('tbodyRelEstoque');
+
     if (!produtos || produtos.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-secondary py-4">Nenhum produto encontrado</td></tr>';
+        estadoVazio(tbody, 7, 'Nenhum produto encontrado');
         return;
     }
-    
-    tbody.innerHTML = produtos.map(p => {
+
+    tbody.innerHTML = '';
+    produtos.forEach(p => {
         let statusClass = 'bg-success';
         let statusText = 'OK';
         if (p.status_estoque === 'sem_estoque') {
@@ -87,33 +94,40 @@ function atualizarTabelaRelEstoque(produtos) {
             statusClass = 'bg-warning text-dark';
             statusText = 'Baixo';
         }
-        
-        return `
-            <tr>
-                <td><strong>${p.nome}</strong></td>
-                <td>${p.categoria}</td>
-                <td>${p.unidade_medida}</td>
-                <td>${p.estoque_minimo}</td>
-                <td>${p.quantidade_total}</td>
-                <td>${p.localizacao || '-'}</td>
-                <td><span class="badge ${statusClass}">${statusText}</span></td>
-            </tr>
-        `;
-    }).join('');
+
+        const tr = document.createElement('tr');
+
+        tr.appendChild(montarCelula(`<strong>${escapeHtml(p.nome)}</strong>`));
+        tr.appendChild(montarCelula(escapeHtml(p.categoria)));
+        tr.appendChild(montarCelula(p.unidade_medida));
+        tr.appendChild(montarCelula(p.estoque_minimo));
+        tr.appendChild(montarCelula(p.quantidade_total));
+        tr.appendChild(montarCelula(p.localizacao || '-'));
+
+        const statusCelula = document.createElement('td');
+        statusCelula.className = 'text-center';
+        const badgeSpan = document.createElement('span');
+        badgeSpan.className = `badge ${statusClass}`;
+        badgeSpan.textContent = statusText;
+        statusCelula.appendChild(badgeSpan);
+        tr.appendChild(statusCelula);
+
+        tbody.appendChild(tr);
+    });
 }
 
 function atualizarGraficosRelEstoque(resumoCategoria, produtos) {
     // Gráfico 1: Estoque por categoria (Doughnut)
     const ctxCat = document.getElementById('chartRelEstoqueCategoria').getContext('2d');
     if (chartRelEstoqueCategoria) chartRelEstoqueCategoria.destroy();
-    
+
     chartRelEstoqueCategoria = new Chart(ctxCat, {
         type: 'doughnut',
         data: {
-            labels: resumoCategoria.map(c => c.categoria),
+            labels: resumoCategoria.map(c => escapeHtml(c.categoria)),
             datasets: [{
                 data: resumoCategoria.map(c => c.quantidade_total),
-                backgroundColor: ['#246b3a', '#1b542d', '#82d39c', '#123d24', '#4a9c66', '#6ec68a'],
+                backgroundColor: ['#1e7a46', '#14532d', '#82d39c', '#123d24', '#4a9c66', '#6ec68a'],
                 borderWidth: 0
             }]
         },
@@ -125,15 +139,15 @@ function atualizarGraficosRelEstoque(resumoCategoria, produtos) {
             }
         }
     });
-    
+
     // Gráfico 2: Status do estoque (Bar)
     const ctxStatus = document.getElementById('chartRelStatusEstoque').getContext('2d');
     if (chartRelStatusEstoque) chartRelStatusEstoque.destroy();
-    
+
     const semEstoque = produtos.filter(p => p.status_estoque === 'sem_estoque').length;
     const baixo = produtos.filter(p => p.status_estoque === 'baixo').length;
     const ok = produtos.filter(p => p.status_estoque === 'ok').length;
-    
+
     chartRelStatusEstoque = new Chart(ctxStatus, {
         type: 'bar',
         data: {
@@ -141,7 +155,7 @@ function atualizarGraficosRelEstoque(resumoCategoria, produtos) {
             datasets: [{
                 label: 'Quantidade de Produtos',
                 data: [semEstoque, baixo, ok],
-                backgroundColor: ['#a33a3a', '#a66a08', '#246b3a'],
+                backgroundColor: ['#dc3545', '#ffc107', '#1e7a46'],
                 borderRadius: 8
             }]
         },
@@ -159,79 +173,97 @@ function atualizarGraficosRelEstoque(resumoCategoria, produtos) {
 async function carregarRelMovimentacoes() {
     const formData = new FormData(document.getElementById('formFiltroMov'));
     const params = new URLSearchParams();
-    
+
     for (const [key, value] of formData.entries()) {
         if (value) params.append(key, value);
     }
-    
+
     try {
         const response = await apiFetch(`relatorios/movimentacoes.php?${params.toString()}`);
         const data = await apiJson(response);
-        
+
         if (data.sucesso) {
             atualizarTabelaRelMovimentacoes(data.dados.movimentacoes);
             atualizarResumoMovimentacoes(data.dados.resumo);
+        } else {
+            mostrarToast('Erro ao carregar relatório de movimentações.', 'danger');
         }
     } catch (e) {
         console.error('Erro ao carregar relatório de movimentações:', e);
+        mostrarToast('Erro ao carregar relatório de movimentações.', 'danger');
     }
 }
 
 function atualizarTabelaRelMovimentacoes(movimentacoes) {
-    const tbody = document.querySelector('#tabelaRelMovimentacoes tbody');
-    
+    const tbody = document.getElementById('tbodyRelMovimentacoes');
+
     if (!movimentacoes || movimentacoes.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-secondary py-4">Nenhuma movimentação encontrada</td></tr>';
+        estadoVazio(tbody, 7, 'Nenhuma movimentação encontrada');
         return;
     }
-    
-    tbody.innerHTML = movimentacoes.map(mov => `
-        <tr>
-            <td>${formatarDataHora(mov.data_movimentacao)}</td>
-            <td><strong>${mov.produto_nome}</strong></td>
-            <td>${mov.numero_lote}</td>
-            <td><span class="badge ${mov.tipo === 'entrada' ? 'bg-success' : 'bg-danger'}">${mov.tipo}</span></td>
-            <td>${mov.quantidade}</td>
-            <td>${mov.usuario_nome}</td>
-            <td>${mov.observacao || '-'}</td>
-        </tr>
-    `).join('');
+
+    tbody.innerHTML = '';
+    movimentacoes.forEach(mov => {
+        const tr = document.createElement('tr');
+
+        tr.appendChild(montarCelula(formatarDataHora(mov.data_movimentacao)));
+        tr.appendChild(montarCelula(`<strong>${escapeHtml(mov.produto_nome)}</strong>`));
+        tr.appendChild(montarCelula(escapeHtml(mov.numero_lote)));
+
+        const tipoCelula = document.createElement('td');
+        tipoCelula.className = 'text-center';
+        const tipoSpan = document.createElement('span');
+        tipoSpan.className = `badge ${mov.tipo === 'entrada' ? 'bg-success' : 'bg-danger'}`;
+        tipoSpan.textContent = mov.tipo === 'entrada' ? 'Entrada' : 'Saída';
+        tipoCelula.appendChild(tipoSpan);
+        tr.appendChild(tipoCelula);
+
+        tr.appendChild(montarCelula(mov.quantidade));
+        tr.appendChild(montarCelula(escapeHtml(mov.usuario_nome)));
+        tr.appendChild(montarCelula(mov.observacao || '-'));
+
+        tbody.appendChild(tr);
+    });
 }
 
 function atualizarResumoMovimentacoes(resumo) {
-    document.getElementById('relTotalEntradas').textContent = resumo.entrada?.total_quantidade || 0;
-    document.getElementById('relQtdEntradas').textContent = `${resumo.entrada?.total_movimentacoes || 0} movimentações`;
-    document.getElementById('relTotalSaidas').textContent = resumo.saida?.total_quantidade || 0;
-    document.getElementById('relQtdSaidas').textContent = `${resumo.saida?.total_movimentacoes || 0} movimentações`;
+    document.getElementById('relTotalEntradas').textContent = resumo.entrada?.total_quantidade ?? 0;
+    document.getElementById('relQtdEntradas').textContent = `${resumo.entrada?.total_movimentacoes ?? 0} movimentações`;
+    document.getElementById('relTotalSaidas').textContent = resumo.saida?.total_quantidade ?? 0;
+    document.getElementById('relQtdSaidas').textContent = `${resumo.saida?.total_movimentacoes ?? 0} movimentações`;
 }
 
 async function carregarRelValidade() {
     const status = document.getElementById('rel_validade_status').value;
-    
+
     try {
         const response = await apiFetch(`relatorios/validade.php?status=${status}`);
         const data = await apiJson(response);
-        
+
         if (data.sucesso) {
             atualizarTabelaRelValidade(data.dados.lotes);
-            document.getElementById('relValVencidos').textContent = data.dados.estatisticas.vencidos;
-            document.getElementById('relValProximos').textContent = data.dados.estatisticas.proximos;
-            document.getElementById('relValOk').textContent = data.dados.estatisticas.ok;
+            document.getElementById('relValVencidos').textContent = data.dados.estatisticas.vencidos ?? 0;
+            document.getElementById('relValProximos').textContent = data.dados.estatisticas.proximos ?? 0;
+            document.getElementById('relValOk').textContent = data.dados.estatisticas.ok ?? 0;
+        } else {
+            mostrarToast('Erro ao carregar relatório de validade.', 'danger');
         }
     } catch (e) {
         console.error('Erro ao carregar relatório de validade:', e);
+        mostrarToast('Erro ao carregar relatório de validade.', 'danger');
     }
 }
 
 function atualizarTabelaRelValidade(lotes) {
-    const tbody = document.querySelector('#tabelaRelValidade tbody');
-    
+    const tbody = document.getElementById('tbodyRelValidade');
+
     if (!lotes || lotes.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-secondary py-4">Nenhum lote encontrado</td></tr>';
+        estadoVazio(tbody, 8, 'Nenhum lote encontrado');
         return;
     }
-    
-    tbody.innerHTML = lotes.map(l => {
+
+    tbody.innerHTML = '';
+    lotes.forEach(l => {
         let statusClass = 'bg-success';
         let statusText = 'Válido';
         if (l.status_validade === 'vencido') {
@@ -241,35 +273,37 @@ function atualizarTabelaRelValidade(lotes) {
             statusClass = 'bg-warning text-dark';
             statusText = 'Próximo';
         }
-        
-        return `
-            <tr class="${l.status_validade === 'vencido' ? 'table-danger' : (l.status_validade === 'proximo' ? 'table-warning' : '')}">
-                <td><strong>${l.produto_nome}</strong></td>
-                <td>${l.categoria_nome}</td>
-                <td>${l.numero_lote}</td>
-                <td>${formatarData(l.data_fabricacao)}</td>
-                <td>${formatarData(l.data_validade)}</td>
-                <td>${l.dias_restantes >= 0 ? l.dias_restantes : Math.abs(l.dias_restantes)}</td>
-                <td>${l.quantidade}</td>
-                <td><span class="badge ${statusClass}">${statusText}</span></td>
-            </tr>
-        `;
-    }).join('');
+
+        const tr = document.createElement('tr');
+        if (l.status_validade === 'vencido') tr.className = 'table-danger';
+        else if (l.status_validade === 'proximo') tr.className = 'table-warning';
+
+        tr.appendChild(montarCelula(`<strong>${escapeHtml(l.produto_nome)}</strong>`));
+        tr.appendChild(montarCelula(escapeHtml(l.categoria_nome)));
+        tr.appendChild(montarCelula(escapeHtml(l.numero_lote)));
+        tr.appendChild(montarCelula(formatarData(l.data_fabricacao)));
+        tr.appendChild(montarCelula(formatarData(l.data_validade)));
+        tr.appendChild(montarCelula(l.dias_restantes >= 0 ? l.dias_restantes : Math.abs(l.dias_restantes)));
+        tr.appendChild(montarCelula(l.quantidade));
+
+        const statusCelula = document.createElement('td');
+        statusCelula.className = 'text-center';
+        const badgeSpan = document.createElement('span');
+        badgeSpan.className = `badge ${statusClass}`;
+        badgeSpan.textContent = statusText;
+        statusCelula.appendChild(badgeSpan);
+        tr.appendChild(statusCelula);
+
+        tbody.appendChild(tr);
+    });
 }
 
 async function logout() {
-    try {
-        await apiFetch('auth/logout.php', { method: 'POST' });
-        window.location.href = 'index.html';
-    } catch (e) {
-        window.location.href = 'index.html';
-    }
+    await window.logout();
 }
 
 function formatarData(dataString) {
-    if (!dataString) return '-';
-    const data = new Date(dataString + 'T00:00:00');
-    return data.toLocaleDateString('pt-BR');
+    return window.formatarDataCurta(dataString);
 }
 
 function formatarDataInput(data) {
@@ -280,7 +314,9 @@ function formatarDataInput(data) {
 }
 
 function formatarDataHora(dataString) {
-    if (!dataString) return '-';
-    const data = new Date(dataString);
-    return data.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    return window.formatarData(dataString, true);
+}
+
+function mostrarToast(mensagem, tipo = 'info') {
+    window.mostrarToast(mensagem, tipo);
 }
