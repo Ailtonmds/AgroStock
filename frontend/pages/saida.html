@@ -52,6 +52,26 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4 p-md-5">
                         <form id="formSaida" novalidate>
+                            <!-- Campo de leitura por código de barras (scanner USB) -->
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="codigo_barras" class="form-label fw-semibold">Código de Barras <span class="text-info">(Leitor USB)</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-barcode"></i></span>
+                                        <input type="text" class="form-control" id="codigo_barras" name="codigo_barras" data-scan-box autocomplete="off" placeholder="Escaneie o código de barras...">
+                                        <button type="button" class="btn btn-link text-decoration-none" data-scan-remove>
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                    <div class="form-text">Aproxime o leitor USB do código de barras. O produto será preenchido automaticamente.</div>
+                                </div>
+                                <div class="col-md-6 d-flex align-items-end">
+                                    <button type="button" class="btn btn-outline-primary w-100" id="btnBuscarPorCodigo">
+                                        <i class="bi bi-search me-1"></i>Buscar por Código
+                                    </button>
+                                </div>
+                            </div>
+
                             <div class="row g-3 mb-4">
                                 <div class="col-md-6">
                                     <label for="produto_id" class="form-label fw-semibold">Produto <span class="text-danger">*</span></label>
@@ -119,6 +139,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/api.js"></script>
     <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/scan-to-input.js"></script>
     <script src="../assets/js/estoque_saida.js"></script>
 </body>
 </html>

@@ -1,9 +1,11 @@
 // Saída de Estoque JavaScript
 
 let produtosCache = [];
+let scanner = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     carregarProdutos();
+    inicializarLeitorCodigoBarras();
 
     document.getElementById('btnLogout').addEventListener('click', logout);
     document.getElementById('formSaida').addEventListener('submit', registrarSaida);
@@ -15,7 +17,98 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('validade_lote').value = '';
         document.getElementById('quantidade').removeAttribute('max');
     });
+
+    document.getElementById('btnBuscarPorCodigo').addEventListener('click', buscarProdutoPorCodigo);
 });
+
+/**
+ * Inicializa o leitor de código de barras USB (ScanToInput)
+ */
+function inicializarLeitorCodigoBarras() {
+    scanner = new ScanToInput({
+        scanThreshold: 50,
+        minLength: 6,
+        inputSelector: '[data-scan-box]',
+        mode: 'overwrite',
+        validation: (code) => /^\d{8,14}$/.test(code),
+        onScan: (code, input) => {
+            input?.classList.add('is-valid');
+            buscarProdutoPorCodigo(code);
+        }
+    });
+}
+
+/**
+ * Busca produto pelo código de barras digitado ou escaneado
+ * @param {string|null} codigo - Código de barras (se null, lê do input)
+ */
+async function buscarProdutoPorCodigo(codigo = null) {
+    const codigoInput = document.getElementById('codigo_barras');
+    const code = codigo || codigoInput.value.trim();
+
+    if (!code) {
+        mostrarToast('Informe ou escaneie um código de barras.', 'warning');
+        return;
+    }
+
+    if (!/^\d{8,14}$/.test(code)) {
+        mostrarToast('Código de barras inválido. Use 8 a 14 dígitos numéricos.', 'danger');
+        return;
+    }
+
+    try {
+        const response = await apiFetch(`produtos/buscar_por_codigo.php?codigo_barras=${encodeURIComponent(code)}`);
+        const data = await apiJson(response);
+
+        if (!data.sucesso) {
+            mostrarToast(data.mensagem || 'Produto não encontrado.', 'danger');
+            codigoInput.classList.remove('is-valid');
+            codigoInput.classList.add('is-invalid');
+            return;
+        }
+
+        const produto = data.dados.produto;
+        const lotes = data.dados.lotes;
+
+        // Preencher select de produto
+        const produtoSelect = document.getElementById('produto_id');
+        produtoSelect.innerHTML = `
+            <option value="${produto.id}" selected>${escapeHtml(produto.nome)} (${escapeHtml(produto.unidade_medida)})</option>
+        `;
+
+        // Preencher select de lotes (apenas com estoque > 0 para saída)
+        const loteSelect = document.getElementById('lote_id');
+        if (lotes && lotes.length > 0) {
+            const lotesComEstoque = lotes.filter(l => l.quantidade_disponivel > 0);
+            if (lotesComEstoque.length > 0) {
+                loteSelect.innerHTML = '<option value="">Selecione um lote</option>' +
+                    lotesComEstoque.map(l => `<option value="${escapeHtml(l.lote_id)}" data-qtd="${escapeHtml(l.quantidade_disponivel)}" data-val="${escapeHtml(l.data_validade)}">${escapeHtml(l.numero_lote)} (Qtd: ${escapeHtml(l.quantidade_disponivel)})</option>`).join('');
+                loteSelect.disabled = false;
+            } else {
+                loteSelect.innerHTML = '<option value="">Nenhum lote com estoque disponível</option>';
+                loteSelect.disabled = true;
+            }
+        } else {
+            loteSelect.innerHTML = '<option value="">Nenhum lote cadastrado para este produto</option>';
+            loteSelect.disabled = true;
+        }
+
+        // Resetar campos derivados
+        document.getElementById('quantidade_disponivel').value = '';
+        document.getElementById('validade_lote').value = '';
+        document.getElementById('quantidade').removeAttribute('max');
+
+        codigoInput.classList.remove('is-invalid');
+        codigoInput.classList.add('is-valid');
+
+        mostrarToast(`Produto encontrado: ${escapeHtml(produto.nome)}`, 'success');
+
+    } catch (e) {
+        console.error('Erro ao buscar produto por código:', e);
+        mostrarToast('Erro ao buscar produto.', 'danger');
+        document.getElementById('codigo_barras').classList.add('is-invalid');
+    }
+}
 
 async function carregarProdutos() {
     try {
