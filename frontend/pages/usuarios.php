@@ -56,7 +56,6 @@ $subtituloPagina = 'Gerencie os usuários do sistema';
                 </div>
             </div>
         </div>
-    </main>
 
     <!-- Modal Usuário -->
     <div class="modal fade" id="modalUsuario" tabindex="-1" aria-labelledby="modalUsuarioLabel" aria-hidden="true">

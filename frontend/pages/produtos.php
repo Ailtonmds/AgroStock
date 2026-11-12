@@ -89,7 +89,6 @@ $subtituloPagina = 'Gerencie os produtos do almoxarifado';
                 </div>
             </div>
         </div>
-    </main>
 
     <!-- Modal Produto -->
     <div class="modal fade" id="modalProduto" tabindex="-1" aria-labelledby="modalProdutoLabel" aria-hidden="true">

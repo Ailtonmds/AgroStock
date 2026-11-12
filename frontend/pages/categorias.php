@@ -54,7 +54,6 @@ $subtituloPagina = 'Gerencie as categorias de produtos';
                 </div>
             </div>
         </div>
-    </main>
 
     <!-- Modal Categoria -->
     <div class="modal fade" id="modalCategoria" tabindex="-1" aria-labelledby="modalCategoriaLabel" aria-hidden="true">

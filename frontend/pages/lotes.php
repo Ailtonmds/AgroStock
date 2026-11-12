@@ -86,7 +86,6 @@ $subtituloPagina = 'Gerencie os lotes dos produtos';
                 </div>
             </div>
         </div>
-    </main>
 
     <!-- Modal Lote -->
     <div class="modal fade" id="modalLote" tabindex="-1" aria-labelledby="modalLoteLabel" aria-hidden="true">

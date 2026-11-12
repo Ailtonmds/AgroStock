@@ -192,8 +192,6 @@ $subtituloPagina = 'Monitore estoque baixo e produtos próximos do vencimento';
                 </div>
             </div>
         </div>
-    </main>
-
 <?php include __DIR__ . '/../partials/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/api.js"></script>
