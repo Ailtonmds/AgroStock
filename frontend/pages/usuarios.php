@@ -1,3 +1,10 @@
+<?php
+require_once __DIR__ . '/../partials/page_auth.php';
+
+$paginaAtual = 'usuarios';
+$tituloPagina = 'Usuários';
+$subtituloPagina = 'Gerencie os usuários do sistema';
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -8,45 +15,23 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark agro-navbar">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="dashboard.html">
-                <span class="navbar-logo">AG</span>
-                <span>AgroStock</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal" aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="menuPrincipal">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="dashboard.html"><i class="bi bi-grid me-1"></i>Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="produtos.html"><i class="bi bi-box-seam me-1"></i>Produtos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="categorias.html"><i class="bi bi-tags me-1"></i>Categorias</a></li>
-                    <li class="nav-item"><a class="nav-link" href="lotes.html"><i class="bi bi-upc-scan me-1"></i>Lotes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="estoque.html"><i class="bi bi-arrow-left-right me-1"></i>Estoque</a></li>
-                    <li class="nav-item"><a class="nav-link" href="alertas.html"><i class="bi bi-bell me-1"></i>Alertas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="bi bi-file-earmark-bar-graph me-1"></i>Relatórios</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="usuarios.html"><i class="bi bi-people me-1"></i>Usuários</a></li>
-                    <li class="nav-item"><button class="nav-link btn btn-link text-white p-0" id="btnLogout"><i class="bi bi-box-arrow-right me-1"></i>Sair</button></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+<body>
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
-    <main class="container py-4">
-        <section class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-            <div class="page-header">
+        <section class="page-header-flex">
+            <div class="page-header-section">
                 <span class="badge-pagina">Sistema</span>
-                <h1 class="h3 fw-bold mb-1">Usuários</h1>
+                <h1>Usuários</h1>
                 <p class="text-secondary mb-0">Gerencie os usuários do sistema</p>
             </div>
-            <button class="btn btn-success px-4" data-bs-toggle="modal" data-bs-target="#modalUsuario">
-                <i class="bi bi-plus-lg me-1"></i>Novo usuário
-            </button>
+            <div class="page-header-actions">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalUsuario">
+                    <i class="bi bi-plus-lg me-1"></i> Novo usuário
+                </button>
+            </div>
         </section>
 
-        <div class="card border-0 shadow-sm">
+        <div class="card">
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0" id="tabelaUsuarios">
@@ -86,23 +71,23 @@
                         <input type="hidden" name="id" id="usuarioId">
 
                         <div class="mb-3">
-                            <label for="nome" class="form-label fw-semibold">Nome completo <span class="text-danger">*</span></label>
+                            <label for="nome" class="form-label">Nome completo <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="nome" name="nome" required maxlength="150">
                         </div>
 
                         <div class="mb-3">
-                            <label for="usuario" class="form-label fw-semibold">Nome de usuário <span class="text-danger">*</span></label>
+                            <label for="usuario" class="form-label">Nome de usuário <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="usuario" name="usuario" required maxlength="100">
                         </div>
 
                         <div class="mb-3">
-                            <label for="senha" class="form-label fw-semibold">Senha <span class="text-danger">*</span></label>
+                            <label for="senha" class="form-label">Senha <span class="text-danger">*</span></label>
                             <input type="password" class="form-control" id="senha" name="senha" required minlength="6" autocomplete="new-password">
                             <div class="form-text" id="senhaHelp">Mínimo 6 caracteres</div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="nivel_acesso" class="form-label fw-semibold">Nível de acesso <span class="text-danger">*</span></label>
+                            <label for="nivel_acesso" class="form-label">Nível de acesso <span class="text-danger">*</span></label>
                             <select class="form-select" id="nivel_acesso" name="nivel_acesso" required>
                                 <option value="operador">Operador</option>
                                 <option value="admin">Administrador</option>
@@ -115,9 +100,9 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-success" id="btnSalvarUsuario">
-                            <i class="bi bi-check-lg me-1"></i>Salvar
+                            <i class="bi bi-check-lg me-1"></i> Salvar
                         </button>
                     </div>
                 </form>
@@ -125,6 +110,7 @@
         </div>
     </div>
 
+<?php include __DIR__ . '/../partials/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/api.js"></script>
     <script src="../assets/js/utils.js"></script>

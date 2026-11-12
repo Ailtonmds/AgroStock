@@ -1,3 +1,10 @@
+<?php
+require_once __DIR__ . '/../partials/page_auth.php';
+
+$paginaAtual = 'produtos';
+$tituloPagina = 'Produtos';
+$subtituloPagina = 'Gerencie os produtos do almoxarifado';
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -8,46 +15,24 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark agro-navbar">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="dashboard.html">
-                <span class="navbar-logo">AG</span>
-                <span>AgroStock</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal" aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="menuPrincipal">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="dashboard.html"><i class="bi bi-grid me-1"></i>Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="produtos.html"><i class="bi bi-box-seam me-1"></i>Produtos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="categorias.html"><i class="bi bi-tags me-1"></i>Categorias</a></li>
-                    <li class="nav-item"><a class="nav-link" href="lotes.html"><i class="bi bi-upc-scan me-1"></i>Lotes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="estoque.html"><i class="bi bi-arrow-left-right me-1"></i>Estoque</a></li>
-                    <li class="nav-item"><a class="nav-link" href="alertas.html"><i class="bi bi-bell me-1"></i>Alertas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="bi bi-file-earmark-bar-graph me-1"></i>Relatórios</a></li>
-                    <li class="nav-item"><a class="nav-link" href="usuarios.html"><i class="bi bi-people me-1"></i>Usuários</a></li>
-                    <li class="nav-item"><button class="nav-link btn btn-link text-white p-0" id="btnLogout"><i class="bi bi-box-arrow-right me-1"></i>Sair</button></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+<body>
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
-    <main class="container py-4">
-        <section class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-            <div class="page-header">
+        <section class="page-header-flex">
+            <div class="page-header-section">
                 <span class="badge-pagina">Estoque</span>
-                <h1 class="h3 fw-bold mb-1">Produtos</h1>
+                <h1>Produtos</h1>
                 <p class="text-secondary mb-0">Gerencie os produtos do almoxarifado</p>
             </div>
-            <button class="btn btn-success px-4" data-bs-toggle="modal" data-bs-target="#modalProduto">
-                <i class="bi bi-plus-lg me-1"></i>Novo produto
-            </button>
+            <div class="page-header-actions">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalProduto">
+                    <i class="bi bi-plus-lg me-1"></i> Novo produto
+                </button>
+            </div>
         </section>
 
         <!-- Busca e filtros -->
-        <div class="card border-0 shadow-sm mb-4">
+        <div class="card mb-4">
             <div class="card-body p-3 p-md-4">
                 <div class="row g-3 align-items-end">
                     <div class="col-md-6 col-lg-4">
@@ -69,21 +54,21 @@
                         </select>
                     </div>
                     <div class="col-md-12 col-lg-3 d-flex gap-2">
-                        <button class="btn btn-outline-primary w-100" id="btnBuscar"><i class="bi bi-search me-1"></i>Buscar</button>
-                        <button class="btn btn-outline-secondary w-100" id="btnLimparBusca"><i class="bi bi-x-lg me-1"></i>Limpar</button>
+                        <button class="btn btn-outline-primary w-100" id="btnBuscar"><i class="bi bi-search me-1"></i> Buscar</button>
+                        <button class="btn btn-outline-secondary w-100" id="btnLimparBusca"><i class="bi bi-x-lg me-1"></i> Limpar</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Tabela de produtos -->
-        <div class="card border-0 shadow-sm">
+        <div class="card">
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0" id="tabelaProdutos">
                         <thead class="table-light">
                             <tr>
-                                <th style="width: 22%;">Nome</th>
+                                <th style="width: 24%;">Nome</th>
                                 <th style="width: 16%;">Categoria</th>
                                 <th style="width: 12%;">Unidade</th>
                                 <th style="width: 12%;">Estoque Mín.</th>
@@ -119,19 +104,19 @@
                         <input type="hidden" name="id" id="produtoId">
 
                         <div class="mb-3">
-                            <label for="nome" class="form-label fw-semibold">Nome do produto <span class="text-danger">*</span></label>
+                            <label for="nome" class="form-label">Nome do produto <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="nome" name="nome" required>
                         </div>
 
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <label for="categoria_id" class="form-label fw-semibold">Categoria <span class="text-danger">*</span></label>
+                                <label for="categoria_id" class="form-label">Categoria <span class="text-danger">*</span></label>
                                 <select class="form-select" id="categoria_id" name="categoria_id" required>
                                     <option value="">Selecione</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label for="unidade_medida" class="form-label fw-semibold">Unidade de medida <span class="text-danger">*</span></label>
+                                <label for="unidade_medida" class="form-label">Unidade de medida <span class="text-danger">*</span></label>
                                 <select class="form-select" id="unidade_medida" name="unidade_medida" required>
                                     <option value="">Selecione</option>
                                     <option value="Unidade">Unidade</option>
@@ -148,17 +133,17 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="descricao" class="form-label fw-semibold">Descrição</label>
+                            <label for="descricao" class="form-label">Descrição</label>
                             <textarea class="form-control" id="descricao" name="descricao" rows="2"></textarea>
                         </div>
 
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <label for="estoque_minimo" class="form-label fw-semibold">Estoque mínimo</label>
+                                <label for="estoque_minimo" class="form-label">Estoque mínimo</label>
                                 <input type="number" class="form-control" id="estoque_minimo" name="estoque_minimo" value="0" min="0">
                             </div>
                             <div class="col-md-6">
-                                <label for="localizacao" class="form-label fw-semibold">Localização</label>
+                                <label for="localizacao" class="form-label">Localização</label>
                                 <input type="text" class="form-control" id="localizacao" name="localizacao" placeholder="Ex: Prateleira A1">
                             </div>
                         </div>
@@ -169,9 +154,9 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-success" id="btnSalvarProduto">
-                            <i class="bi bi-check-lg me-1"></i>Salvar
+                            <i class="bi bi-check-lg me-1"></i> Salvar
                         </button>
                     </div>
                 </form>
@@ -179,6 +164,7 @@
         </div>
     </div>
 
+<?php include __DIR__ . '/../partials/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/api.js"></script>
     <script src="../assets/js/utils.js"></script>

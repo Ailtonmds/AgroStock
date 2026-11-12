@@ -51,4 +51,4 @@ INSERT IGNORE INTO movimentacoes (produto_id, lote_id, tipo, quantidade, usuario
 (13, 10, 'entrada', 60, 1, 'Compra inicial'),
 (14, 10, 'entrada', 80, 1, 'Compra inicial'),
 (1, 1, 'saida', 5, 1, 'Uso em propriedade'),
-(3, 3, 'saida', 10, 1, 'Vacinação de rebanho');
+(3, 3, 'saida', 10, 1, 'Vacinação de rebanho');t

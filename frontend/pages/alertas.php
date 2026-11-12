@@ -1,3 +1,10 @@
+<?php
+require_once __DIR__ . '/../partials/page_auth.php';
+
+$paginaAtual = 'alertas';
+$tituloPagina = 'Alertas';
+$subtituloPagina = 'Monitore estoque baixo e produtos próximos do vencimento';
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -8,92 +15,70 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark agro-navbar">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="dashboard.html">
-                <span class="navbar-logo">AG</span>
-                <span>AgroStock</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal" aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="menuPrincipal">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="dashboard.html"><i class="bi bi-grid me-1"></i>Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="produtos.html"><i class="bi bi-box-seam me-1"></i>Produtos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="categorias.html"><i class="bi bi-tags me-1"></i>Categorias</a></li>
-                    <li class="nav-item"><a class="nav-link" href="lotes.html"><i class="bi bi-upc-scan me-1"></i>Lotes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="estoque.html"><i class="bi bi-arrow-left-right me-1"></i>Estoque</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="alertas.html"><i class="bi bi-bell me-1"></i>Alertas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="bi bi-file-earmark-bar-graph me-1"></i>Relatórios</a></li>
-                    <li class="nav-item"><a class="nav-link" href="usuarios.html"><i class="bi bi-people me-1"></i>Usuários</a></li>
-                    <li class="nav-item"><button class="nav-link btn btn-link text-white p-0" id="btnLogout"><i class="bi bi-box-arrow-right me-1"></i>Sair</button></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+<body>
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
-    <main class="container py-4">
-        <section class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-            <div class="page-header">
+        <section class="page-header-flex">
+            <div class="page-header-section">
                 <span class="badge-pagina">Estoque</span>
-                <h1 class="h3 fw-bold mb-1">Alertas do Sistema</h1>
+                <h1>Alertas do Sistema</h1>
                 <p class="text-secondary mb-0">Monitore estoque baixo e produtos próximos do vencimento</p>
             </div>
-            <button class="btn btn-outline-primary" id="btnAtualizarAlertas"><i class="bi bi-arrow-clockwise me-1"></i>Atualizar</button>
+            <div class="page-header-actions">
+                <button class="btn btn-outline-primary" id="btnAtualizarAlertas"><i class="bi bi-arrow-clockwise me-1"></i> Atualizar</button>
+            </div>
         </section>
 
         <!-- Cards de resumo -->
         <div class="row g-3 mb-4">
             <div class="col-sm-6 col-xl-3">
-                <div class="card border-0 shadow-sm dashboard-stat-card h-100 border-danger">
-                    <div class="card-body p-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-secondary small fw-semibold mb-2">Estoque Baixo</p>
-                                <p class="display-6 fw-bold mb-0 text-danger" id="totalEstoqueBaixo">0</p>
+                                <span class="stat-label">Estoque Baixo</span>
+                                <p class="stat-value text-danger" id="totalEstoqueBaixo">0</p>
                             </div>
-                            <span class="dashboard-stat-icon" style="background: rgba(220, 53, 69, 0.12); color: var(--vermelho);"><i class="bi bi-exclamation-triangle"></i></span>
+                            <span class="stat-icon" style="background: var(--vermelho-suave); color: var(--vermelho);"><i class="bi bi-exclamation-triangle"></i></span>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-sm-6 col-xl-3">
-                <div class="card border-0 shadow-sm dashboard-stat-card h-100 border-warning">
-                    <div class="card-body p-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-secondary small fw-semibold mb-2">Próximos do Vencimento</p>
-                                <p class="display-6 fw-bold mb-0 text-warning" id="totalProximosValidade">0</p>
+                                <span class="stat-label">Próximos do Vencimento</span>
+                                <p class="stat-value text-warning" id="totalProximosValidade">0</p>
                             </div>
-                            <span class="dashboard-stat-icon" style="background: rgba(255, 193, 7, 0.12); color: var(--amarelo);"><i class="bi bi-clock-history"></i></span>
+                            <span class="stat-icon" style="background: var(--amarelo-suave); color: #b38e30;"><i class="bi bi-clock-history"></i></span>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-sm-6 col-xl-3">
-                <div class="card border-0 shadow-sm dashboard-stat-card h-100 border-danger">
-                    <div class="card-body p-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-secondary small fw-semibold mb-2">Vencidos</p>
-                                <p class="display-6 fw-bold mb-0 text-danger" id="totalVencidos">0</p>
+                                <span class="stat-label">Vencidos</span>
+                                <p class="stat-value text-danger" id="totalVencidos">0</p>
                             </div>
-                            <span class="dashboard-stat-icon" style="background: rgba(220, 53, 69, 0.15); color: var(--vermelho);"><i class="bi bi-calendar-x"></i></span>
+                            <span class="stat-icon" style="background: var(--vermelho-suave); color: var(--vermelho);"><i class="bi bi-calendar-x"></i></span>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-sm-6 col-xl-3">
-                <div class="card border-0 shadow-sm dashboard-stat-card h-100 border-info">
-                    <div class="card-body p-4">
+                <div class="card stat-card h-100">
+                    <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-secondary small fw-semibold mb-2">Total de Alertas</p>
-                                <p class="display-6 fw-bold mb-0 text-info" id="totalAlertas">0</p>
+                                <span class="stat-label">Total de Alertas</span>
+                                <p class="stat-value text-info" id="totalAlertas">0</p>
                             </div>
-                            <span class="dashboard-stat-icon" style="background: rgba(13, 202, 240, 0.1); color: #0dcaf0;"><i class="bi bi-bell"></i></span>
+                            <span class="stat-icon" style="background: var(--azul-suave); color: var(--azul);"><i class="bi bi-bell"></i></span>
                         </div>
                     </div>
                 </div>
@@ -104,17 +89,17 @@
         <ul class="nav nav-tabs mb-4" id="alertasTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="tab-estoque-baixo" data-bs-toggle="tab" data-bs-target="#panel-estoque-baixo" type="button" role="tab">
-                    <i class="bi bi-exclamation-triangle me-1"></i>Estoque Baixo
+                    <i class="bi bi-exclamation-triangle me-1"></i> Estoque Baixo
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="tab-proximos" data-bs-toggle="tab" data-bs-target="#panel-proximos" type="button" role="tab">
-                    <i class="bi bi-clock-history me-1"></i>Próximos do Vencimento
+                    <i class="bi bi-clock-history me-1"></i> Próximos do Vencimento
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="tab-vencidos" data-bs-toggle="tab" data-bs-target="#panel-vencidos" type="button" role="tab">
-                    <i class="bi bi-calendar-x me-1"></i>Vencidos
+                    <i class="bi bi-calendar-x me-1"></i> Vencidos
                 </button>
             </li>
         </ul>
@@ -122,7 +107,7 @@
         <div class="tab-content" id="alertasTabContent">
             <!-- Estoque Baixo -->
             <div class="tab-pane fade show active" id="panel-estoque-baixo" role="tabpanel">
-                <div class="card border-0 shadow-sm">
+                <div class="card">
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover mb-0" id="tabelaEstoqueBaixo">
@@ -151,7 +136,7 @@
 
             <!-- Próximos do Vencimento -->
             <div class="tab-pane fade" id="panel-proximos" role="tabpanel">
-                <div class="card border-0 shadow-sm">
+                <div class="card">
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover mb-0" id="tabelaProximosValidade">
@@ -180,7 +165,7 @@
 
             <!-- Vencidos -->
             <div class="tab-pane fade" id="panel-vencidos" role="tabpanel">
-                <div class="card border-0 shadow-sm">
+                <div class="card">
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover mb-0" id="tabelaVencidos">
@@ -209,6 +194,7 @@
         </div>
     </main>
 
+<?php include __DIR__ . '/../partials/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/api.js"></script>
     <script src="../assets/js/utils.js"></script>

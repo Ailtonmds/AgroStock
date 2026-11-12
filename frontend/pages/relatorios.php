@@ -1,3 +1,10 @@
+<?php
+require_once __DIR__ . '/../partials/page_auth.php';
+
+$paginaAtual = 'relatorios';
+$tituloPagina = 'Relatórios';
+$subtituloPagina = 'Visualize e exporte relatórios do almoxarifado';
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -9,57 +16,35 @@
     <link rel="stylesheet" href="../assets/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark agro-navbar">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="dashboard.html">
-                <span class="navbar-logo">AG</span>
-                <span>AgroStock</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal" aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="menuPrincipal">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="dashboard.html"><i class="bi bi-grid me-1"></i>Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="produtos.html"><i class="bi bi-box-seam me-1"></i>Produtos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="categorias.html"><i class="bi bi-tags me-1"></i>Categorias</a></li>
-                    <li class="nav-item"><a class="nav-link" href="lotes.html"><i class="bi bi-upc-scan me-1"></i>Lotes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="estoque.html"><i class="bi bi-arrow-left-right me-1"></i>Estoque</a></li>
-                    <li class="nav-item"><a class="nav-link" href="alertas.html"><i class="bi bi-bell me-1"></i>Alertas</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="relatorios.html"><i class="bi bi-file-earmark-bar-graph me-1"></i>Relatórios</a></li>
-                    <li class="nav-item"><a class="nav-link" href="usuarios.html"><i class="bi bi-people me-1"></i>Usuários</a></li>
-                    <li class="nav-item"><button class="nav-link btn btn-link text-white p-0" id="btnLogout"><i class="bi bi-box-arrow-right me-1"></i>Sair</button></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+<body>
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
-    <main class="container py-4">
-        <section class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-            <div class="page-header">
+        <section class="page-header-flex">
+            <div class="page-header-section">
                 <span class="badge-pagina">Estoque</span>
-                <h1 class="h3 fw-bold mb-1">Relatórios</h1>
+                <h1>Relatórios</h1>
                 <p class="text-secondary mb-0">Visualize e exporte relatórios do almoxarifado</p>
             </div>
-            <button class="btn btn-outline-primary" id="btnAtualizarRelatorios"><i class="bi bi-arrow-clockwise me-1"></i>Atualizar</button>
+            <div class="page-header-actions">
+                <button class="btn btn-outline-primary" id="btnAtualizarRelatorios"><i class="bi bi-arrow-clockwise me-1"></i> Atualizar</button>
+            </div>
         </section>
 
         <!-- Abas dos relatórios -->
         <ul class="nav nav-tabs mb-4" id="relatoriosTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="tab-estoque" data-bs-toggle="tab" data-bs-target="#panel-estoque" type="button" role="tab">
-                    <i class="bi bi-box-seam me-1"></i>Estoque Atual
+                    <i class="bi bi-box-seam me-1"></i> Estoque Atual
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="tab-movimentacoes" data-bs-toggle="tab" data-bs-target="#panel-movimentacoes" type="button" role="tab">
-                    <i class="bi bi-arrow-left-right me-1"></i>Movimentações
+                    <i class="bi bi-arrow-left-right me-1"></i> Movimentações
                 </button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="tab-validade" data-bs-toggle="tab" data-bs-target="#panel-validade" type="button" role="tab">
-                    <i class="bi bi-calendar-check me-1"></i>Validade
+                    <i class="bi bi-calendar-check me-1"></i> Validade
                 </button>
             </li>
         </ul>
@@ -69,24 +54,24 @@
             <div class="tab-pane fade show active" id="panel-estoque" role="tabpanel">
                 <div class="row g-3 mb-4">
                     <div class="col-lg-6">
-                        <div class="card border-0 shadow-sm h-100">
+                        <div class="card h-100">
                             <div class="card-body p-4 p-md-5">
-                                <h5 class="fw-bold mb-3"><i class="bi bi-pie-chart text-success me-2"></i>Estoque por Categoria</h5>
+                                <h5 class="fw-bold mb-3"><i class="bi bi-pie-chart text-success me-2"></i> Estoque por Categoria</h5>
                                 <canvas id="chartRelEstoqueCategoria" height="260"></canvas>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <div class="card border-0 shadow-sm h-100">
+                        <div class="card h-100">
                             <div class="card-body p-4 p-md-5">
-                                <h5 class="fw-bold mb-3"><i class="bi bi-bar-chart text-primary me-2"></i>Status do Estoque</h5>
+                                <h5 class="fw-bold mb-3"><i class="bi bi-bar-chart text-primary me-2"></i> Status do Estoque</h5>
                                 <canvas id="chartRelStatusEstoque" height="260"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm">
+                <div class="card">
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover mb-0" id="tabelaRelEstoque">
@@ -116,25 +101,25 @@
 
             <!-- Relatório de Movimentações -->
             <div class="tab-pane fade" id="panel-movimentacoes" role="tabpanel">
-                <div class="card border-0 shadow-sm mb-4">
+                <div class="card mb-4">
                     <div class="card-body p-3 p-md-4">
                         <form id="formFiltroMov" class="row g-3">
                             <div class="col-md-3">
-                                <label for="rel_data_inicio" class="form-label fw-semibold">Data Início</label>
+                                <label for="rel_data_inicio" class="form-label">Data Início</label>
                                 <input type="date" class="form-control" id="rel_data_inicio" name="data_inicio">
                             </div>
                             <div class="col-md-3">
-                                <label for="rel_data_fim" class="form-label fw-semibold">Data Fim</label>
+                                <label for="rel_data_fim" class="form-label">Data Fim</label>
                                 <input type="date" class="form-control" id="rel_data_fim" name="data_fim">
                             </div>
                             <div class="col-md-3">
-                                <label for="rel_produto_id" class="form-label fw-semibold">Produto</label>
+                                <label for="rel_produto_id" class="form-label">Produto</label>
                                 <select class="form-select" id="rel_produto_id" name="produto_id">
                                     <option value="">Todos</option>
                                 </select>
                             </div>
                             <div class="col-md-3 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search me-1"></i>Filtrar</button>
+                                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search me-1"></i> Filtrar</button>
                             </div>
                         </form>
                     </div>
@@ -142,7 +127,7 @@
 
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
-                        <div class="card border-0 shadow-sm h-100 bg-success text-white">
+                        <div class="card stat-card h-100" style="background: linear-gradient(135deg, var(--verde), var(--verde-escuro)); color: var(--branco);">
                             <div class="card-body text-center p-4">
                                 <h6 class="text-white-50">Total de Entradas</h6>
                                 <h2 class="fw-bold mb-1" id="relTotalEntradas">0</h2>
@@ -151,7 +136,7 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card border-0 shadow-sm h-100 bg-danger text-white">
+                        <div class="card stat-card h-100" style="background: linear-gradient(135deg, var(--vermelho), #b02a37); color: var(--branco);">
                             <div class="card-body text-center p-4">
                                 <h6 class="text-white-50">Total de Saídas</h6>
                                 <h2 class="fw-bold mb-1" id="relTotalSaidas">0</h2>
@@ -161,7 +146,7 @@
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm">
+                <div class="card">
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover mb-0" id="tabelaRelMovimentacoes">
@@ -191,11 +176,11 @@
 
             <!-- Relatório de Validade -->
             <div class="tab-pane fade" id="panel-validade" role="tabpanel">
-                <div class="card border-0 shadow-sm mb-4">
+                <div class="card mb-4">
                     <div class="card-body p-3 p-md-4">
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <label for="rel_validade_status" class="form-label fw-semibold">Filtrar por Status</label>
+                                <label for="rel_validade_status" class="form-label">Filtrar por Status</label>
                                 <select class="form-select" id="rel_validade_status">
                                     <option value="todos">Todos</option>
                                     <option value="vencidos">Vencidos</option>
@@ -204,7 +189,7 @@
                                 </select>
                             </div>
                             <div class="col-md-4 d-flex align-items-end">
-                                <button class="btn btn-outline-primary w-100" id="btnAplicarFiltroValidade"><i class="bi bi-search me-1"></i>Buscar</button>
+                                <button class="btn btn-outline-primary w-100" id="btnAplicarFiltroValidade"><i class="bi bi-search me-1"></i> Buscar</button>
                             </div>
                         </div>
                     </div>
@@ -212,35 +197,35 @@
 
                 <div class="row g-3 mb-4">
                     <div class="col-md-4">
-                        <div class="card border-0 shadow-sm h-100 bg-danger text-white">
+                        <div class="card stat-card h-100 border-danger">
                             <div class="card-body text-center p-4">
-                                <h6 class="text-white-50">Vencidos</h6>
-                                <h2 class="fw-bold mb-1" id="relValVencidos">0</h2>
+                                <h6 class="text-muted">Vencidos</h6>
+                                <h2 class="fw-bold mb-1 text-danger" id="relValVencidos">0</h2>
                                 <small>lotes</small>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card border-0 shadow-sm h-100 bg-warning text-dark">
+                        <div class="card stat-card h-100 border-warning">
                             <div class="card-body text-center p-4">
-                                <h6 class="text-white-50">Próximos do Vencimento</h6>
-                                <h2 class="fw-bold mb-1" id="relValProximos">0</h2>
+                                <h6 class="text-muted">Próximos do Vencimento</h6>
+                                <h2 class="fw-bold mb-1 text-warning" id="relValProximos">0</h2>
                                 <small>lotes</small>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card border-0 shadow-sm h-100 bg-success text-white">
+                        <div class="card stat-card h-100 border-success">
                             <div class="card-body text-center p-4">
-                                <h6 class="text-white-50">Válidos</h6>
-                                <h2 class="fw-bold mb-1" id="relValOk">0</h2>
+                                <h6 class="text-muted">Válidos</h6>
+                                <h2 class="fw-bold mb-1 text-success" id="relValOk">0</h2>
                                 <small>lotes</small>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-sm">
+                <div class="card">
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover mb-0" id="tabelaRelValidade">
@@ -271,6 +256,7 @@
         </div>
     </main>
 
+<?php include __DIR__ . '/../partials/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/api.js"></script>
     <script src="../assets/js/utils.js"></script>

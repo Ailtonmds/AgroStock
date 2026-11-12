@@ -1,3 +1,10 @@
+<?php
+require_once __DIR__ . '/../partials/page_auth.php';
+
+$paginaAtual = 'lotes';
+$tituloPagina = 'Lotes';
+$subtituloPagina = 'Gerencie os lotes dos produtos';
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -8,46 +15,24 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark agro-navbar">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="dashboard.html">
-                <span class="navbar-logo">AG</span>
-                <span>AgroStock</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal" aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="menuPrincipal">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="dashboard.html"><i class="bi bi-grid me-1"></i>Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="produtos.html"><i class="bi bi-box-seam me-1"></i>Produtos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="categorias.html"><i class="bi bi-tags me-1"></i>Categorias</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="lotes.html"><i class="bi bi-upc-scan me-1"></i>Lotes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="estoque.html"><i class="bi bi-arrow-left-right me-1"></i>Estoque</a></li>
-                    <li class="nav-item"><a class="nav-link" href="alertas.html"><i class="bi bi-bell me-1"></i>Alertas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="bi bi-file-earmark-bar-graph me-1"></i>Relatórios</a></li>
-                    <li class="nav-item"><a class="nav-link" href="usuarios.html"><i class="bi bi-people me-1"></i>Usuários</a></li>
-                    <li class="nav-item"><button class="nav-link btn btn-link text-white p-0" id="btnLogout"><i class="bi bi-box-arrow-right me-1"></i>Sair</button></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+<body>
+<?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
-    <main class="container py-4">
-        <section class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-            <div class="page-header">
+        <section class="page-header-flex">
+            <div class="page-header-section">
                 <span class="badge-pagina">Estoque</span>
-                <h1 class="h3 fw-bold mb-1">Lotes</h1>
+                <h1>Lotes</h1>
                 <p class="text-secondary mb-0">Gerencie os lotes dos produtos</p>
             </div>
-            <button class="btn btn-success px-4" data-bs-toggle="modal" data-bs-target="#modalLote">
-                <i class="bi bi-plus-lg me-1"></i>Novo lote
-            </button>
+            <div class="page-header-actions">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalLote">
+                    <i class="bi bi-plus-lg me-1"></i> Novo lote
+                </button>
+            </div>
         </section>
 
         <!-- Filtros -->
-        <div class="card border-0 shadow-sm mb-4">
+        <div class="card mb-4">
             <div class="card-body p-3 p-md-4">
                 <div class="row g-3 align-items-end">
                     <div class="col-md-6 col-lg-4">
@@ -66,16 +51,16 @@
                         </select>
                     </div>
                     <div class="col-md-2 col-lg-2 d-grid">
-                        <button class="btn btn-outline-primary" id="btnAplicarFiltro"><i class="bi bi-search me-1"></i>Buscar</button>
+                        <button class="btn btn-outline-primary" id="btnAplicarFiltro"><i class="bi bi-search me-1"></i> Buscar</button>
                     </div>
                     <div class="col-md-12 col-lg-3 d-grid">
-                        <button class="btn btn-outline-secondary" id="btnLimparFiltro"><i class="bi bi-x-lg me-1"></i>Limpar</button>
+                        <button class="btn btn-outline-secondary" id="btnLimparFiltro"><i class="bi bi-x-lg me-1"></i> Limpar</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm">
+        <div class="card">
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0" id="tabelaLotes">
@@ -116,37 +101,37 @@
                         <input type="hidden" name="id" id="loteId">
 
                         <div class="mb-3">
-                            <label for="produto_id" class="form-label fw-semibold">Produto <span class="text-danger">*</span></label>
+                            <label for="produto_id" class="form-label">Produto <span class="text-danger">*</span></label>
                             <select class="form-select" id="produto_id" name="produto_id" required>
                                 <option value="">Selecione um produto</option>
                             </select>
                         </div>
 
                         <div class="mb-3">
-                            <label for="numero_lote" class="form-label fw-semibold">Número do Lote <span class="text-danger">*</span></label>
+                            <label for="numero_lote" class="form-label">Número do Lote <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="numero_lote" name="numero_lote" required maxlength="100">
                         </div>
 
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <label for="data_fabricacao" class="form-label fw-semibold">Data de Fabricação</label>
+                                <label for="data_fabricacao" class="form-label">Data de Fabricação</label>
                                 <input type="date" class="form-control" id="data_fabricacao" name="data_fabricacao">
                             </div>
                             <div class="col-md-6">
-                                <label for="data_validade" class="form-label fw-semibold">Data de Validade <span class="text-danger">*</span></label>
+                                <label for="data_validade" class="form-label">Data de Validade <span class="text-danger">*</span></label>
                                 <input type="date" class="form-control" id="data_validade" name="data_validade" required>
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="quantidade" class="form-label fw-semibold">Quantidade Inicial <span class="text-danger">*</span></label>
+                            <label for="quantidade" class="form-label">Quantidade Inicial <span class="text-danger">*</span></label>
                             <input type="number" class="form-control" id="quantidade" name="quantidade" required min="1" value="1">
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-success" id="btnSalvarLote">
-                            <i class="bi bi-check-lg me-1"></i>Salvar
+                            <i class="bi bi-check-lg me-1"></i> Salvar
                         </button>
                     </div>
                 </form>
@@ -154,6 +139,7 @@
         </div>
     </div>
 
+<?php include __DIR__ . '/../partials/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/api.js"></script>
     <script src="../assets/js/utils.js"></script>
