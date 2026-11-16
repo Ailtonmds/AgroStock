@@ -19,6 +19,7 @@ Todas as 13 etapas do plano principal (`prompt.md`) estão concluídas e validad
 - Frontend: telas de lotes, produtos, etiquetas, entrada/saída com leitor USB integradas.
 - Documentação técnica: `docs/CODIGOS_DE_BARRAS.md` completa.
 - Ajustes pós-plano (Etapa 14): correção do rastreamento do Git do arquivo de progresso e uso do Enter do scanner como gatilho de conclusão do scan.
+- Correção de permissão de sistema (Apache): `chmod o+x /home/ailton` para permitir travessia do usuário `http` ao caminho do projeto (resolvia erro 403/negado em frontend e backend, incluindo movimentações).
 
 ---
 
@@ -337,17 +338,18 @@ Próxima tarefa: nenhuma.
 ### 16/11/2026 (ajustes pós-plano)
 - Corrigido rastreamento do Git do arquivo de progresso: removido `docs/PROGRESSO_MANUTEÇÂO.MD` do índice e adicionado `docs/PROGRESSO_MANUTENCAO.md`.
 - Implementado Enter do scanner como gatilho de conclusão do scan em `frontend/assets/js/scan-to-input.js`.
+- Corrigido erro de permissão do Apache nas movimentações (e em todo o sistema): `chmod o+x /home/ailton` para permitir travessia do usuário `http` até `/home/ailton/Documents/sistema-tcc-2026`. Logs mostravam `AH00035: access to /agrostock/ denied ... because search permissions are missing on a component of the path`.
 - Arquivo de progresso atualizado com a Etapa 14.
 
 ---
 
 ## Próxima ação
 
-Nenhuma. Todas as 13 etapas do plano principal (`prompt.md`) estão concluídas e validadas, além dos ajustes da Etapa 14.
+Nenhuma. Todas as 13 etapas do plano principal (`prompt.md`) estão concluídas e validadas, além dos ajustes da Etapa 14 e da correção de permissão do Apache.
 
 ## Status geral do plano
 
-**PLANO PRINCIPAL ENCERRADO — 13/13 ETAPAS CONCLUÍDA E TESTADA + ETAPA 14 (AJUSTES PÓS-PLANO) CONCLUÍDA**
+**PLANO PRINCIPAL ENCERRADO — 13/13 ETAPAS CONCLUÍDA E TESTADA + ETAPA 14 (AJUSTES PÓS-PLANO) CONCLUÍDA + CORREÇÃO DE PERMISSÃO APACHE**
 
 Todas as etapas foram implementadas, testadas e registradas neste arquivo. Não há tarefas pendentes, nem bloqueios, nem autorizações aguardando validação.
 
