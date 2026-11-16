@@ -12,12 +12,13 @@ Status utilizados:
 
 ## Resumo da execução
 
-Todas as 13 etapas do plano principal (`prompt.md`) estão concluídas e validadas.
+Todas as 13 etapas do plano principal (`prompt.md`) estão concluídas e validadas. Após o encerramento do plano, foram realizados dois ajustes (registrados na Etapa 14).
 
 - Banco de dados: migrado (`codigos_fornecedores`, `codigo_barras_interno`, índices UNIQUE).
 - Backend: endpoints implementados e funcionando (Picqer, Code 128, local).
 - Frontend: telas de lotes, produtos, etiquetas, entrada/saída com leitor USB integradas.
 - Documentação técnica: `docs/CODIGOS_DE_BARRAS.md` completa.
+- Ajustes pós-plano (Etapa 14): correção do rastreamento do Git do arquivo de progresso e uso do Enter do scanner como gatilho de conclusão do scan.
 
 ---
 
@@ -291,6 +292,22 @@ Próxima tarefa: nenhuma (todas as etapas concluídas).
 
 ---
 
+## Etapa 14 — Ajustes pós-plano (concluída e testada)
+
+- [x] Corrigir rastreamento do Git do arquivo de progresso: o Git rastreava `docs/PROGRESSO_MANUTEÇÂO.MD` (com ç/acento) enquanto o arquivo físico é `docs/PROGRESSO_MANUTENCAO.md`, aparecendo como deletado. Removido do índice o nome acentuado e adicionado o nome atual.
+  - Arquivos modificados (índice Git): remoção de `docs/PROGRESSO_MANUTEÇÂO.MD`, adição de `docs/PROGRESSO_MANUTENCAO.md`.
+- [x] Usar Enter do scanner como gatilho de conclusão do scan em `frontend/assets/js/scan-to-input.js`: antes o código era processado apenas pelo timeout de inatividade; agora a tecla Enter processa imediatamente o buffer acumulado (alinhado à Etapa 9 do plano, que menciona "Enter do scanner").
+  - Arquivos modificados: `frontend/assets/js/scan-to-input.js`.
+
+Testes executados:
+- `git status` confirma `docs/PROGRESSO_MANUTENCAO.md` como o único arquivo de progresso rastreado (sem nome acentuado órfão).
+- Leitura de código de barras via scanner com Enter processa o código imediatamente.
+
+Resultado: OK — ambos os ajustes aplicados.
+Próxima tarefa: nenhuma.
+
+---
+
 ## Histórico de execução
 
 ### 16/11/2026
@@ -317,17 +334,22 @@ Próxima tarefa: nenhuma (todas as etapas concluídas).
 - Nenhuma tarefa pendente. Plano encerrado.
 - Arquivo de progresso atualizado com status final.
 
+### 16/11/2026 (ajustes pós-plano)
+- Corrigido rastreamento do Git do arquivo de progresso: removido `docs/PROGRESSO_MANUTEÇÂO.MD` do índice e adicionado `docs/PROGRESSO_MANUTENCAO.md`.
+- Implementado Enter do scanner como gatilho de conclusão do scan em `frontend/assets/js/scan-to-input.js`.
+- Arquivo de progresso atualizado com a Etapa 14.
+
 ---
 
 ## Próxima ação
 
-Nenhuma. Todas as 13 etapas do plano principal (`prompt.md`) estão concluídas e validadas. O plano está encerrado.
+Nenhuma. Todas as 13 etapas do plano principal (`prompt.md`) estão concluídas e validadas, além dos ajustes da Etapa 14.
 
 ## Status geral do plano
 
-**PLANO PRINCIPAL ENCERRADO — 13/13 ETAPAS CONCLUÍDA E TESTADA**
+**PLANO PRINCIPAL ENCERRADO — 13/13 ETAPAS CONCLUÍDA E TESTADA + ETAPA 14 (AJUSTES PÓS-PLANO) CONCLUÍDA**
 
 Todas as etapas foram implementadas, testadas e registradas neste arquivo. Não há tarefas pendentes, nem bloqueios, nem autorizações aguardando validação.
 
 ---
-*Este arquivo deve ser atualizado a cada alteração, conforme a Etapa 11 do plano de progresso (`docs/PROGRESSO_MANUTEÇÂO.MD`). Nunca apagar registros anteriores.*
+*Este arquivo deve ser atualizado a cada alteração, conforme a Etapa 11 do plano de progresso (`prompt.md`). Nunca apagar registros anteriores.*

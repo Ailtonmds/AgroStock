@@ -39,6 +39,20 @@ class ScanToInput {
     const now = Date.now();
     const char = event.key;
 
+    // Enter do scanner: finaliza a leitura e processa o código acumulado imediatamente.
+    // Leitores USB HID costumam enviar o código seguido de Enter; tratá-lo como gatilho
+    // torna a leitura mais confiável do que depender apenas do timeout de inatividade.
+    if (char === 'Enter') {
+      if (this.buffer.length >= this.config.minLength) {
+        clearTimeout(this.scanTimeout);
+        this.scanToInputProcessScan(this.buffer);
+      }
+      this.buffer = '';
+      this.lastCharTime = now;
+      event.preventDefault();
+      return;
+    }
+
     if (char.length === 1 && /^[\w\d-]$/i.test(char)) {
       const isFast = now - this.lastCharTime < this.config.scanThreshold;
       this.lastCharTime = now;
