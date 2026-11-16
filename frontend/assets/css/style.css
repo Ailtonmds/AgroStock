@@ -991,6 +991,62 @@ main.container {
     font-size: 0.85rem;
 }
 
+.login-container .logo-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border-radius: 12px;
+    background: rgba(201, 161, 59, 0.15);
+    border: 1px solid rgba(201, 161, 59, 0.25);
+    padding: 4px;
+}
+
+.login-container .brand {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--verde-escuro);
+    margin: 10px 0 6px;
+    letter-spacing: -0.5px;
+}
+
+.login-container .subtitle {
+    color: var(--texto-secundario);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.login-container .auth-link {
+    color: var(--dourado);
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.login-container .auth-link:hover {
+    color: var(--verde-escuro);
+    text-decoration: underline;
+}
+
+.login-container .alert {
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+}
+
+.login-container .alert-danger {
+    background: rgba(220, 53, 69, 0.10);
+    color: var(--vermelho);
+    border: 1px solid rgba(220, 53, 69, 0.20);
+}
+
+.login-container .alert-success {
+    background: rgba(36, 107, 58, 0.10);
+    color: var(--verde-escuro);
+    border: 1px solid rgba(36, 107, 58, 0.20);
+}
+
 /* =========================================
    RESPONSIVIDADE
 ========================================= */
@@ -1061,4 +1117,18 @@ main.container {
 
 .tab-content .card {
     margin-bottom: 0;
+}
+
+/* =========================================
+   LAYOUT WRAPPER (sidebar + topbar)
+============================================= */
+.app-layout {
+    display: flex;
+    position: relative;
+    min-height: 100vh;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
 }
