@@ -36,6 +36,10 @@
                     <i class="bi bi-upc-scan"></i>
                     <span class="sidebar-label">Lotes</span>
                 </a>
+                <a class="sidebar-item" href="etiquetas.html">
+                    <i class="bi bi-barcode"></i>
+                    <span class="sidebar-label">Etiquetas</span>
+                </a>
                 <a class="sidebar-item" href="estoque.html">
                     <i class="bi bi-arrow-left-right"></i>
                     <span class="sidebar-label">Estoque</span>
@@ -189,6 +193,15 @@
                             <input type="text" class="form-control" id="nome" name="nome" required>
                         </div>
 
+                        <div class="mb-3">
+                            <label for="codigo_barras" class="form-label fw-semibold">Código de Barras do Produto (Fornecedor)</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="codigo_barras" name="codigo_barras" placeholder="Ex: 7891234567890">
+                                <span class="input-group-text"><i class="bi bi-barcode text-muted"></i></span>
+                            </div>
+                            <div class="form-text">Código de barras externo fornecido pelo fabricante (EAN, etc.). Preserva zeros iniciais.</div>
+                        </div>
+
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label for="categoria_id" class="form-label fw-semibold">Categoria <span class="text-danger">*</span></label>
@@ -233,6 +246,44 @@
                             <input type="checkbox" class="form-check-input" id="ativo" name="ativo" checked>
                             <label class="form-check-label" for="ativo">Ativo</label>
                         </div>
+
+                        <!-- Códigos de fornecedor (múltiplos códigos externos) -->
+                        <div id="codigosFornecedorSection" class="card border-0 shadow-sm mt-4">
+                            <div class="card-header bg-verde-suave">
+                                <h6 class="mb-0 fw-semibold text-verde-escuro"><i class="bi bi-barcode me-1"></i>Códigos do Fornecedor</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-5">
+                                        <label class="form-label fw-semibold small">Código de barras</label>
+                                        <input type="text" class="form-control form-control-sm" id="cf_codigo_barras" placeholder="Ex: 7891234567890">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small">Origem</label>
+                                        <input type="text" class="form-control form-control-sm" id="cf_origem" placeholder="Ex: Fabricante">
+                                    </div>
+                                    <div class="col-md-3 d-grid">
+                                        <button class="btn btn-success btn-sm" type="button" id="btnAdicionarCodigoFornecedor">
+                                            <i class="bi bi-plus me-1"></i>Adicionar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover mb-0" id="tabelaCodigosFornecedor">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th style="width: 45%;">Código de Barras</th>
+                                                <th style="width: 30%;">Origem</th>
+                                                <th class="text-end" style="width: 25%;">Ação</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbodyCodigosFornecedor"></tbody>
+                                    </table>
+                                </div>
+                                <input type="hidden" name="codigos_fornecedor" id="codigos_fornecedor">
+                            </div>
+                        </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>

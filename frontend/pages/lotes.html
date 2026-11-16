@@ -146,18 +146,19 @@
                         <table class="table table-hover mb-0" id="tabelaLotes">
                             <thead class="table-light">
                                 <tr>
-                                    <th style="width: 24%;">Produto</th>
+                                    <th style="width: 20%;">Produto</th>
                                     <th style="width: 16%;">Número do Lote</th>
+                                    <th style="width: 14%;">Código Interno</th>
                                     <th style="width: 14%;">Fabricação</th>
                                     <th style="width: 14%;">Validade</th>
-                                    <th style="width: 14%;">Qtd. Disponível</th>
-                                    <th style="width: 12%;">Status</th>
-                                    <th class="text-end" style="width: 12%;">Ações</th>
+                                    <th style="width: 12%;">Qtd. Disponível</th>
+                                    <th style="width: 10%;">Status</th>
+                                    <th class="text-end" style="width: 10%;">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="tbodyLotes">
                                 <tr>
-                                    <td colspan="7" class="text-center text-secondary py-4">
+                                    <td colspan="8" class="text-center text-secondary py-4">
                                         <span class="spinner-border spinner-border-sm me-1"></span> Carregando...
                                     </td>
                                 </tr>
@@ -208,6 +209,33 @@
                             <label for="quantidade" class="form-label fw-semibold">Quantidade Inicial <span class="text-danger">*</span></label>
                             <input type="number" class="form-control" id="quantidade" name="quantidade" required min="1" value="1">
                         </div>
+
+                        <!-- Identificação por código de barras -->
+                        <div id="identificacaoCodigoBarras" class="card border-0 shadow-sm mb-3" style="display:none;">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="badge bg-success me-2"><i class="bi bi-barcode"></i></span>
+                                    <span class="form-label fw-semibold" style="margin-bottom:0;">Identificação por código de barras</span>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="codigo_barras_interno" class="form-label fw-semibold">Código Interno</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="codigo_barras_interno" name="codigo_barras_interno" readonly style="background-color: var(--fundo); font-weight:700; letter-spacing:1px;">
+                                            <span class="input-group-text"><i class="bi bi-info-circle text-muted"></i></span>
+                                        </div>
+                                        <div class="form-text">Gerado automaticamente pelo sistema. Não pode ser editado manualmente.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">Visualizar Código de Barras</label>
+                                        <div class="text-center">
+                                            <img id="codigo_barras_svg" src="" alt="Código de barras" style="max-width:100%; height:auto; border:1px solid var(--borda); background:#fff;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>

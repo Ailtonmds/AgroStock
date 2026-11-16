@@ -9,7 +9,7 @@ if (realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) {
  */
 
 // URL base da API (ajustar conforme necessário)
-define('API_BASE_URL', 'http://localhost/sistema-tcc-2026/backend');
+define('API_BASE_URL', '/backend');
 
 // Configurações de sessão
 ini_set('session.cookie_httponly', 1);

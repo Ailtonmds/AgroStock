@@ -33,7 +33,7 @@ if (form) {
         mensagemSucesso.classList.add('d-none');
 
         try {
-            const response = await apiFetch('../criar-login/criar_usuario.php', {
+            const response = await apiFetch('auth/criar_usuario.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nome, usuario, senha, nivel_acesso })

@@ -29,7 +29,8 @@ function inicializarLeitorCodigoBarras() {
         minLength: 6,
         inputSelector: '[data-scan-box]',
         mode: 'overwrite',
-        validation: (code) => /^\d{8,14}$/.test(code),
+        // Aceita códigos numéricos (fornecedor/produto) e alfanuméricos (código interno do lote, ex: AG00000001)
+        validation: (code) => /^[A-Za-z0-9]{6,20}$/.test(code),
         onScan: (code, input) => {
             input?.classList.add('is-valid');
             buscarProdutoPorCodigo(code);
@@ -50,8 +51,8 @@ async function buscarProdutoPorCodigo(codigo = null) {
         return;
     }
 
-    if (!/^\d{8,14}$/.test(code)) {
-        mostrarToast('Código de barras inválido. Use 8 a 14 dígitos numéricos.', 'danger');
+    if (!/^[A-Za-z0-9]{6,20}$/.test(code)) {
+        mostrarToast('Código de barras inválido. Use 6 a 20 caracteres alfanuméricos.', 'danger');
         return;
     }
 
@@ -60,40 +61,61 @@ async function buscarProdutoPorCodigo(codigo = null) {
         const data = await apiJson(response);
 
         if (!data.sucesso) {
-            mostrarToast(data.mensagem || 'Produto não encontrado.', 'danger');
+            mostrarToast(data.mensagem || 'Código não encontrado.', 'danger');
             codigoInput.classList.remove('is-valid');
             codigoInput.classList.add('is-invalid');
             return;
         }
 
-        const produto = data.dados.produto;
-        const lotes = data.dados.lotes;
-
-        // Preencher select de produto
-        const produtoSelect = document.getElementById('produto_id');
-        produtoSelect.innerHTML = `
-            <option value="${produto.id}" selected>${escapeHtml(produto.nome)} (${escapeHtml(produto.unidade_medida)})</option>
-        `;
-
-        // Preencher select de lotes
-        const loteSelect = document.getElementById('lote_id');
-        if (lotes && lotes.length > 0) {
-            loteSelect.innerHTML = '<option value="">Selecione um lote</option>' +
-                lotes.map(l => `<option value="${escapeHtml(l.lote_id)}" data-qtd="${escapeHtml(l.quantidade_disponivel)}" data-val="${escapeHtml(l.data_validade)}">${escapeHtml(l.numero_lote)} (Qtd: ${escapeHtml(l.quantidade_disponivel)})</option>`).join('');
-            loteSelect.disabled = false;
-        } else {
-            loteSelect.innerHTML = '<option value="">Nenhum lote disponível para este produto</option>';
-            loteSelect.disabled = true;
-        }
+        const tipo = data.tipo;
+        const dados = data.dados;
 
         // Resetar campos derivados
         document.getElementById('quantidade_disponivel').value = '';
         document.getElementById('validade_lote').value = '';
+        document.getElementById('lote_id').disabled = true;
+        document.getElementById('lote_id').innerHTML = '<option value="">Selecione um produto primeiro</option>';
+
+        if (tipo === 'lote') {
+            // Código interno de lote: localizar diretamente o lote
+            const lote = dados.lote;
+            const produto = dados.produto;
+
+            const produtoSelect = document.getElementById('produto_id');
+            produtoSelect.innerHTML = `
+                <option value="${produto.id}" selected>${escapeHtml(produto.nome)} (${escapeHtml(produto.unidade_medida)})</option>
+            `;
+            produtoSelect.dispatchEvent(new Event('change'));
+
+            // Após carregar os lotes do produto (assíncrono), selecionar o lote escaneado
+            const tentativas = setTimeout(() => {
+                const loteSelect = document.getElementById('lote_id');
+                const option = Array.from(loteSelect.options).find(o => o.value == lote.id);
+                if (option) {
+                    loteSelect.value = lote.id;
+                    loteSelect.dispatchEvent(new Event('change'));
+                }
+            }, 300);
+
+            // Limpa o timeout se o usuário selecionar outro lote antes
+            document.getElementById('lote_id').addEventListener('change', () => clearTimeout(tentativas), { once: true });
+
+            mostrarToast(`Código interno do lote: ${escapeHtml(lote.codigo_barras_interno)}. Lote "${escapeHtml(lote.numero_lote)}" selecionado.`, 'info');
+        } else {
+            // Código do fornecedor ou do produto: localizar o produto, usuário escolhe o lote
+            const produto = dados.produto;
+            const produtoSelect = document.getElementById('produto_id');
+            produtoSelect.innerHTML = `
+                <option value="${produto.id}" selected>${escapeHtml(produto.nome)} (${escapeHtml(produto.unidade_medida)})</option>
+            `;
+            produtoSelect.dispatchEvent(new Event('change'));
+
+            const origem = tipo === 'fornecedor' ? ' (código do fornecedor)' : '';
+            mostrarToast(`Produto encontrado: ${escapeHtml(produto.nome)}${origem}. Selecione o lote e informe a quantidade.`, 'info');
+        }
 
         codigoInput.classList.remove('is-invalid');
         codigoInput.classList.add('is-valid');
-
-        mostrarToast(`Produto encontrado: ${escapeHtml(produto.nome)}`, 'success');
 
     } catch (e) {
         console.error('Erro ao buscar produto por código:', e);

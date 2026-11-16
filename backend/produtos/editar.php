@@ -26,6 +26,7 @@ $unidade_medida = trim($input['unidade_medida'] ?? '');
 $estoque_minimo = (int) ($input['estoque_minimo'] ?? 0);
 $localizacao = trim($input['localizacao'] ?? '');
 $ativo = isset($input['ativo']) ? (bool) $input['ativo'] : true;
+$codigo_barras = trim($input['codigo_barras'] ?? null);
 
 if ($id <= 0 || $categoria_id <= 0 || $nome === '' || $unidade_medida === '') {
     http_response_code(422);
@@ -62,7 +63,7 @@ try {
         'UPDATE produtos 
          SET categoria_id = :categoria_id, nome = :nome, descricao = :descricao, 
              unidade_medida = :unidade_medida, estoque_minimo = :estoque_minimo, 
-             localizacao = :localizacao, ativo = :ativo 
+             localizacao = :localizacao, ativo = :ativo, codigo_barras = :codigo_barras 
          WHERE id = :id'
     );
     $stmt->execute([
@@ -73,8 +74,43 @@ try {
         'estoque_minimo' => $estoque_minimo,
         'localizacao' => $localizacao,
         'ativo' => $ativo,
+        'codigo_barras' => $codigo_barras === '' ? null : $codigo_barras,
         'id' => $id
     ]);
+
+    // Atualizar códigos de fornecedor associados ao produto (substitui os existentes)
+    $codigosFornecedor = $input['codigos_fornecedor'] ?? null;
+    $stmtCfDelete = $pdo->prepare('DELETE FROM codigos_fornecedores WHERE produto_id = :produto_id');
+    $stmtCfDelete->execute(['produto_id' => $id]);
+
+    $lista = [];
+    if ($codigosFornecedor !== null && $codigosFornecedor !== '') {
+        if (is_string($codigosFornecedor)) {
+            $decodificado = json_decode($codigosFornecedor, true);
+            $lista = is_array($decodificado) ? $decodificado : [];
+        } elseif (is_array($codigosFornecedor)) {
+            $lista = $codigosFornecedor;
+        }
+    }
+    if (!empty($lista)) {
+        $stmtCf = $pdo->prepare(
+            'INSERT INTO codigos_fornecedores (produto_id, codigo_barras, tipo_codigo, origem) 
+             VALUES (:produto_id, :codigo_barras, :tipo_codigo, :origem)'
+        );
+        foreach ($lista as $cf) {
+            $cb = trim($cf['codigo_barras'] ?? '');
+            if ($cb === '') continue;
+            $chk = $pdo->prepare('SELECT id FROM codigos_fornecedores WHERE codigo_barras = :codigo');
+            $chk->execute(['codigo' => $cb]);
+            if ($chk->fetch()) continue;
+            $stmtCf->execute([
+                'produto_id' => $id,
+                'codigo_barras' => $cb,
+                'tipo_codigo' => null,
+                'origem' => trim($cf['origem'] ?? '')
+            ]);
+        }
+    }
 
     echo json_encode([
         'sucesso' => true,
