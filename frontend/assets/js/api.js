@@ -39,10 +39,12 @@
             credentials: options.credentials || 'same-origin'
         });
 
+        // Sessão expirada: não redireciona imediatamente. Deixa o caller tratar o erro
+        // (ex.: mostrar toast "sessão expirada" nas telas de entrada/saída/movimentações)
+        // e, se desejar, redirecionar para o login após a mensagem.
         if (response.status === 401 && !String(path).includes('auth/login.php')) {
-            if (window.location.href !== loginUrl()) {
-                window.location.assign(loginUrl());
-            }
+            // Marca que houve expiração de sessão para o caller decidir o redirecionamento
+            response._sessaoExpirada = true;
         }
 
         return response;

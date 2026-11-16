@@ -205,6 +205,12 @@ async function registrarEntrada(e) {
 
         const result = await apiJson(response);
 
+        if (response._sessaoExpirada) {
+            mostrarToast(result.mensagem || 'Sessão expirada. Faça login novamente.', 'warning');
+            setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+            return;
+        }
+
         if (result.sucesso) {
             mostrarToast('Entrada registrada com sucesso!', 'success');
             e.target.reset();

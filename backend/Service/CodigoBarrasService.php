@@ -81,6 +81,23 @@ class CodigoBarrasService
      * @return string Código interno gerado (ex: AG00000001)
      * @throws \PDOException
      */
+    /**
+     * Sanitiza um código de barras recebido de leitor (scanner).
+     *
+     * Leitores de código de barras costumam enviar automaticamente um
+     * caractere Enter (nova linha) ao final da leitura. Este método remove
+     * quebras de linha, carriage returns e espaços em branco nas extremidades,
+     * equivalente a prevenir o comportamento do Enter no frontend.
+     *
+     * @param string $codigo Código bruto lido pelo scanner
+     * @return string Código sanitizado
+     */
+    public function sanitizarCodigoScanner(string $codigo): string
+    {
+        // Remove Enter (\r, \n), tabs e espaços das extremidades
+        return trim(preg_replace('/\s+/', '', $codigo));
+    }
+
     public function gerarCodigoInternoLote(\PDO $pdo): string
     {
         $stmt = $pdo->query("SELECT MAX(codigo_barras_interno) AS ultimo FROM lotes WHERE codigo_barras_interno IS NOT NULL");
