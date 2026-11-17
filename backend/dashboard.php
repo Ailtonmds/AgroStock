@@ -95,7 +95,7 @@ try {
         FROM categorias c
         LEFT JOIN produtos p ON c.id = p.categoria_id AND p.ativo = 1
         LEFT JOIN produto_lote pl ON p.id = pl.produto_id
-        GROUP BY c.id
+        GROUP BY c.id, c.nome
         ORDER BY total DESC
     ';
     $stmt = $pdo->query($sqlCat);
@@ -104,11 +104,11 @@ try {
     // 8. Dados para gráfico: Entradas vs Saídas (últimos 30 dias)
     $sqlMov30 = '
         SELECT
-            DATE(data_movimentacao) AS data,
+            DATE_FORMAT(data_movimentacao, '%Y-%m-%d') AS dia,
             tipo,
             SUM(quantidade) AS total
         FROM movimentacoes
-        WHERE data_movimentacao >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+        WHERE data_movimentacao >= DATE_SUB(CURDATE(), INTERVAL 29 DAY)
         GROUP BY DATE(data_movimentacao), tipo
         ORDER BY data
     ';
@@ -129,7 +129,10 @@ try {
     }
 
     foreach ($movimentacoes30dias as $mov) {
-        $data = $mov['data'];
+        $data = $mov['dia'];
+        if (!isset($entradas[$data])) {
+            continue;
+        }
         if ($mov['tipo'] === 'entrada') {
             $entradas[$data] = (int) $mov['total'];
         } else {
