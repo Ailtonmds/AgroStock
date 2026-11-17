@@ -27,6 +27,7 @@ sistema-tcc-2026/
 │   └── dashboard.php  # Dados do painel
 ├── database/          # Scripts SQL do banco
 │   ├── database.sql
+│   ├── migration_usuario_unico.sql # Remove níveis de acesso em bancos existentes
 │   ├── dados_teste.sql
 │   └── migration_codigo_barras.sql   # NOVO: adiciona coluna codigo_barras
 ├── frontend/
@@ -42,20 +43,18 @@ sistema-tcc-2026/
 │   │       ├── produtos.js    # CRUD de produtos
 │   │       ├── categorias.js  # CRUD de categorias
 │   │       ├── lotes.js       # CRUD de lotes
-│   │       ├── usuarios.js    # CRUD de usuários
-│   │       ├── estoque_entrada.js
+│   │   │       ├── estoque_entrada.js
 │   │       ├── estoque_saida.js
 │   │       ├── estoque_movimentacoes.js
 │   │       ├── alertas.js
 │   │       ├── relatorios.js
 │   │       └── scan-to-input.js   # NOVO: plugin de leitura de código de barras USB
-│   ├── criar-login/   # Endpoint para criar o usuário inicial
 │   ├── pages/         # Telas HTML do sistema
 │   └── index.html     # Redireciona para a tela inicial
 └── README.md
 ```
 
-As telas ficam em `frontend/pages/`: `index.html` (login), `criar_login.html`, `dashboard.html`, `produtos.html`, `categorias.html`, `lotes.html`, `estoque.html`, `entrada.html`, `saida.html`, `movimentacoes.html`, `alertas.html`, `relatórios.html`. O endereço `frontend/dashboard.html` redireciona para a tela de dashboard em `frontend/pages/dashboard.html`. Os endpoints PHP ficam em `backend/`, exceto o endpoint de criação inicial em `frontend/criar-login/criar_usuario.php`.
+As telas ficam em `frontend/pages/`: `index.html` (login), `criar_login.html`, `dashboard.html`, `produtos.html`, `categorias.html`, `lotes.html`, `estoque.html`, `entrada.html`, `saida.html`, `movimentacoes.html`, `alertas.html`, `relatórios.html`. O endereço `frontend/dashboard.html` redireciona para a tela de dashboard em `frontend/pages/dashboard.html`. Os endpoints PHP ficam em `backend/`. A criação inicial da conta é feita por `backend/auth/criar_usuario.php`.
 
 ## Instalação local
 
@@ -67,7 +66,7 @@ As telas ficam em `frontend/pages/`: `index.html` (login), `criar_login.html`, `
 6. Se precisar dos registros de demonstração, importe também `database/dados_teste.sql`.
 7. Abra `http://localhost/sistema-tcc-2026/frontend/` para iniciar o sistema. A página inicial redireciona para `frontend/pages/index.html`.
 
-O acesso de login é `http://localhost/sistema-tcc-2026/frontend/pages/index.html`. A tela de criação do primeiro administrador fica em `http://localhost/sistema-tcc-2026/frontend/pages/criar_login.html`. O sistema permite somente a criação da primeira conta. Depois que ela existir, novos cadastros são bloqueados. Não existem níveis de acesso nem gerenciamento de múltiplos usuários.
+O acesso de login é `http://localhost/sistema-tcc-2026/frontend/pages/index.html`. A tela de criação da conta única fica em `http://localhost/sistema-tcc-2026/frontend/pages/criar_login.html`. O sistema permite somente a criação da primeira conta. Depois que ela existir, novos cadastros são bloqueados. Não existem níveis de acesso nem gerenciamento de múltiplos usuários.
 
 ## Leitor de código de barras USB (AgroStock)
 
