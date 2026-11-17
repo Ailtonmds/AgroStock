@@ -171,18 +171,12 @@ a:hover {
 }
 
 .login-container .logo {
-    width: 56px;
-    height: 56px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 12px;
-    border-radius: 14px;
-    background: var(--verde);
-    color: #fff;
-    font-size: 20px;
-    font-weight: 800;
-    letter-spacing: 1px;
+    width: 76px;
+    height: 76px;
+    display: block;
+    object-fit: contain;
+    margin: 0 auto 12px;
+    border-radius: 18px;
 }
 
 .login-container .brand {
@@ -207,18 +201,11 @@ a:hover {
 }
 
 .navbar-logo {
-    width: 40px;
-    height: 40px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.14);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    color: #fff;
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: 1px;
+    width: 42px;
+    height: 42px;
+    display: inline-block;
+    object-fit: contain;
+    flex: 0 0 auto;
 }
 
 .navbar-brand {
@@ -674,4 +661,38 @@ a:hover {
 /* Garante que cards dentro de tabs não tenham margem estranha */
 .tab-content .card {
     margin-bottom: 0;
+}
+
+
+/* Identidade visual e gráficos do dashboard */
+.dashboard-chart-container {
+    position: relative;
+    width: 100%;
+    height: 290px;
+    min-height: 240px;
+}
+
+.dashboard-chart-container canvas {
+    display: block;
+    max-width: 100%;
+}
+
+.dashboard-chart-empty {
+    min-height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    color: var(--texto-secundario);
+    text-align: center;
+    font-size: 0.9rem;
+    background: var(--cinza-claro);
+    border: 1px dashed var(--cinza-borda);
+    border-radius: 10px;
+}
+
+@media (max-width: 575.98px) {
+    .dashboard-chart-container {
+        height: 250px;
+    }
 }
