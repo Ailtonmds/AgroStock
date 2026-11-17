@@ -7,13 +7,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
 </head>
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-dark agro-navbar">
         <div class="container-fluid px-4">
             <a class="navbar-brand d-flex align-items-center gap-2" href="dashboard.html">
-                <span class="navbar-logo">AG</span>
+                <img class="navbar-logo" src="../assets/img/agrostock-mark.svg" alt="AgroStock">
                 <span>AgroStock</span>
             </a>
 
@@ -147,7 +147,7 @@
                             </div>
                             <span class="form-section-icon"><i class="bi bi-pie-chart"></i></span>
                         </div>
-                        <canvas id="chartEstoqueCategoria" height="260"></canvas>
+                        <div class="dashboard-chart-container"><canvas id="chartEstoqueCategoria" aria-label="Gráfico de estoque por categoria" role="img"></canvas></div>
                     </div>
                 </article>
             </div>
@@ -161,7 +161,7 @@
                             </div>
                             <span class="form-section-icon"><i class="bi bi-graph-up"></i></span>
                         </div>
-                        <canvas id="chartEntradasSaidas" height="260"></canvas>
+                        <div class="dashboard-chart-container"><canvas id="chartEntradasSaidas" aria-label="Gráfico de entradas e saídas dos últimos 30 dias" role="img"></canvas></div>
                     </div>
                 </article>
             </div>
