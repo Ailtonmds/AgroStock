@@ -53,7 +53,7 @@ if (form) {
             mostrarErro('Erro de conexão. Tente novamente.');
         } finally {
             btnCriar.disabled = false;
-            textoBotao.textContent = 'Criar usuário';
+            textoBotao.textContent = 'Criar conta';
             loading.classList.add('d-none');
         }
     });
