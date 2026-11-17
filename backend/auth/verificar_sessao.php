@@ -18,7 +18,7 @@ if (empty($_SESSION['usuario_id'])) {
 
 // Opcional: verificar se o usuário ainda existe e está ativo no banco
 try {
-    $stmt = $pdo->prepare('SELECT id, usuario, nivel_acesso, ativo FROM usuarios WHERE id = :id LIMIT 1');
+    $stmt = $pdo->prepare('SELECT id, usuario, ativo FROM usuarios WHERE id = :id LIMIT 1');
     $stmt->execute(['id' => $_SESSION['usuario_id']]);
     $usuario = $stmt->fetch();
     
@@ -34,7 +34,6 @@ try {
     
     // Atualizar dados da sessão se necessário
     $_SESSION['usuario'] = $usuario['usuario'];
-    $_SESSION['nivel_acesso'] = $usuario['nivel_acesso'];
     
 } catch (PDOException $e) {
     http_response_code(500);
@@ -45,16 +44,3 @@ try {
     exit;
 }
 
-function exigir_nivel_acesso(array $niveisPermitidos): void
-{
-    if (in_array($_SESSION['nivel_acesso'] ?? '', $niveisPermitidos, true)) {
-        return;
-    }
-
-    http_response_code(403);
-    echo json_encode([
-        'sucesso' => false,
-        'mensagem' => 'Você não tem permissão para executar esta operação.'
-    ]);
-    exit;
-}
