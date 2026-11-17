@@ -1,9 +1,4 @@
 <?php
-/**
- * Excluir (desativar) produto
- * Verifica se há lotes ou movimentações vinculadas antes de excluir fisicamente
- * Se houver, apenas desativa o produto
- */
 
 require_once __DIR__ . '/../config/conexao.php';
 require_once __DIR__ . '/../config/config.php';
@@ -16,87 +11,60 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $input = json_decode(file_get_contents('php://input'), true);
-if ($input === null) {
+if (!is_array($input)) {
     $input = $_POST;
 }
 
-$id = (int) ($input['id'] ?? 0);
-$forcar = (bool) ($input['forcar'] ?? false);
+$id = filter_var($input['id'] ?? null, FILTER_VALIDATE_INT);
 
-if ($id <= 0) {
+if (!$id || $id <= 0) {
     http_response_code(422);
-    echo json_encode(['sucesso' => false, 'mensagem' => 'ID é obrigatório.']);
+    echo json_encode(['sucesso' => false, 'mensagem' => 'Informe um ID de produto válido.']);
     exit;
 }
 
 try {
-    // Verificar se produto existe
-    $stmt = $pdo->prepare('SELECT id, ativo FROM produtos WHERE id = :id');
+    $stmt = $pdo->prepare('SELECT id, ativo FROM produtos WHERE id = :id LIMIT 1');
     $stmt->execute(['id' => $id]);
     $produto = $stmt->fetch();
-    
+
     if (!$produto) {
         http_response_code(404);
         echo json_encode(['sucesso' => false, 'mensagem' => 'Produto não encontrado.']);
         exit;
     }
 
-    // Verificar se há lotes vinculados
-    $stmt = $pdo->prepare('SELECT COUNT(*) FROM produto_lote WHERE produto_id = :id');
-    $stmt->execute(['id' => $id]);
-    $temLotes = $stmt->fetchColumn() > 0;
+    $stmt = $pdo->prepare('SELECT
+        EXISTS(SELECT 1 FROM produto_lote WHERE produto_id = :produto_lote_id)
+        OR EXISTS(SELECT 1 FROM movimentacoes WHERE produto_id = :movimentacao_id)');
+    $stmt->execute([
+        'produto_lote_id' => $id,
+        'movimentacao_id' => $id
+    ]);
+    $possuiVinculos = (bool) $stmt->fetchColumn();
 
-    // Verificar se há movimentações vinculadas
-    $stmt = $pdo->prepare('SELECT COUNT(*) FROM movimentacoes WHERE produto_id = :id');
-    $stmt->execute(['id' => $id]);
-    $temMovimentacoes = $stmt->fetchColumn() > 0;
-
-    if (($temLotes || $temMovimentacoes) && !$forcar) {
-        // Apenas desativar
+    if ($possuiVinculos) {
         $stmt = $pdo->prepare('UPDATE produtos SET ativo = 0 WHERE id = :id');
         $stmt->execute(['id' => $id]);
 
         echo json_encode([
             'sucesso' => true,
-            'mensagem' => 'Produto desativado (possui lotes/movimentações vinculados).',
+            'mensagem' => 'Produto desativado. Os lotes e o histórico de movimentações foram preservados.',
             'dados' => ['acao' => 'desativado']
-        ]);
+        ], JSON_UNESCAPED_UNICODE);
         exit;
     }
 
-    // Exclusão física (apenas se não houver vínculos ou forçar)
-    if ($forcar) {
-        // Excluir em ordem: produto_lote, depois produto
-        $pdo->beginTransaction();
-        
-        $stmt = $pdo->prepare('DELETE FROM produto_lote WHERE produto_id = :id');
-        $stmt->execute(['id' => $id]);
-        
-        $stmt = $pdo->prepare('DELETE FROM produtos WHERE id = :id');
-        $stmt->execute(['id' => $id]);
-        
-        $pdo->commit();
+    $stmt = $pdo->prepare('DELETE FROM produtos WHERE id = :id');
+    $stmt->execute(['id' => $id]);
 
-        echo json_encode([
-            'sucesso' => true,
-            'mensagem' => 'Produto excluído permanentemente.',
-            'dados' => ['acao' => 'excluido']
-        ]);
-    } else {
-        // Desativar
-        $stmt = $pdo->prepare('UPDATE produtos SET ativo = 0 WHERE id = :id');
-        $stmt->execute(['id' => $id]);
-
-        echo json_encode([
-            'sucesso' => true,
-            'mensagem' => 'Produto desativado.',
-            'dados' => ['acao' => 'desativado']
-        ]);
-    }
+    echo json_encode([
+        'sucesso' => true,
+        'mensagem' => 'Produto excluído permanentemente.',
+        'dados' => ['acao' => 'excluido']
+    ], JSON_UNESCAPED_UNICODE);
 } catch (PDOException $e) {
-    if ($pdo->inTransaction()) {
-        $pdo->rollBack();
-    }
+    error_log('AgroStock: erro ao excluir produto: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['sucesso' => false, 'mensagem' => 'Erro ao excluir produto.']);
+    echo json_encode(['sucesso' => false, 'mensagem' => 'Não foi possível excluir o produto.']);
 }
