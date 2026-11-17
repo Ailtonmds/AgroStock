@@ -102,7 +102,7 @@ try {
     $estoquePorCategoria = $stmt->fetchAll();
 
     // 8. Dados para gráfico: Entradas vs Saídas (últimos 30 dias)
-    $sqlMov30 = '
+    $sqlMov30 = "
         SELECT
             DATE_FORMAT(data_movimentacao, '%Y-%m-%d') AS dia,
             tipo,
@@ -110,8 +110,8 @@ try {
         FROM movimentacoes
         WHERE data_movimentacao >= DATE_SUB(CURDATE(), INTERVAL 29 DAY)
         GROUP BY DATE(data_movimentacao), tipo
-        ORDER BY data
-    ';
+        ORDER BY dia
+    ";
     $stmt = $pdo->query($sqlMov30);
     $movimentacoes30dias = $stmt->fetchAll();
 
