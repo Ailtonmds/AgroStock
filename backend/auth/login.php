@@ -36,7 +36,7 @@ if ($usuario === '' || $senha === '') {
 
 try {
     // Buscar usuário
-    $stmt = $pdo->prepare('SELECT id, usuario, senha_hash, nome, nivel_acesso, ativo FROM usuarios WHERE usuario = :usuario LIMIT 1');
+    $stmt = $pdo->prepare('SELECT id, usuario, senha_hash, nome, ativo FROM usuarios WHERE usuario = :usuario LIMIT 1');
     $stmt->execute(['usuario' => $usuario]);
     $usuarioEncontrado = $stmt->fetch();
 
@@ -63,7 +63,6 @@ try {
     $_SESSION['usuario_id'] = (int) $usuarioEncontrado['id'];
     $_SESSION['usuario'] = $usuarioEncontrado['usuario'];
     $_SESSION['nome'] = $usuarioEncontrado['nome'];
-    $_SESSION['nivel_acesso'] = $usuarioEncontrado['nivel_acesso'];
 
     echo json_encode([
         'sucesso' => true,
@@ -72,7 +71,6 @@ try {
             'id' => (int) $usuarioEncontrado['id'],
             'usuario' => $usuarioEncontrado['usuario'],
             'nome' => $usuarioEncontrado['nome'],
-            'nivel_acesso' => $usuarioEncontrado['nivel_acesso']
         ]
     ]);
 
