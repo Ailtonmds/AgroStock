@@ -14,7 +14,6 @@ if (form) {
         const nome = document.getElementById('nome').value.trim();
         const usuario = document.getElementById('usuario').value.trim();
         const senha = document.getElementById('senha').value;
-        const nivel_acesso = document.getElementById('nivel_acesso').value;
 
         if (!nome || !usuario || !senha) {
             mostrarErro('Preencha todos os campos obrigatórios.');
@@ -33,10 +32,10 @@ if (form) {
         mensagemSucesso.classList.add('d-none');
 
         try {
-            const response = await apiFetch('../criar-login/criar_usuario.php', {
+            const response = await apiFetch('auth/criar_usuario.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nome, usuario, senha, nivel_acesso })
+                body: JSON.stringify({ nome, usuario, senha })
             });
 
             const data = await apiJson(response);
