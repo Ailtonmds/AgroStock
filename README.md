@@ -62,13 +62,13 @@ As telas ficam em `frontend/pages/`: `index.html` (login), `criar_login.html`, `
 
 1. Coloque o projeto na raiz pública do Apache, por exemplo `C:\laragon\www\sistema-tcc-2026`.
 2. Inicie o Apache e o MySQL/MariaDB.
-3. Ajuste host, porta, banco, usuário e senha em `backend/config/conexao.php`.
+3. Configure as variáveis de ambiente `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` e `DB_PASS` no Apache/PHP. Consulte `.env.example` como referência. O PHP não carrega arquivos `.env` automaticamente.
 4. Importe `database/database.sql` para criar as tabelas.
 5. Execute `database/migration_codigo_barras.sql` para adicionar a coluna `codigo_barras` à tabela `produtos` (necessário para o leitor de código de barras).
 6. Se precisar dos registros de demonstração, importe também `database/dados_teste.sql`.
 7. Abra `http://localhost/sistema-tcc-2026/frontend/` para iniciar o sistema. A página inicial redireciona para `frontend/pages/index.html`.
 
-O acesso de login é `http://localhost/sistema-tcc-2026/frontend/pages/index.html`. A tela de criação inicial fica em `http://localhost/sistema-tcc-2026/frontend/pages/criar_login.html`.
+O acesso de login é `http://localhost/sistema-tcc-2026/frontend/pages/index.html`. A tela de criação do primeiro administrador fica em `http://localhost/sistema-tcc-2026/frontend/pages/criar_login.html`. O primeiro cadastro recebe perfil de administrador; depois que a primeira conta existir, o endpoint público bloqueia novos cadastros.
 
 ## Leitor de código de barras USB (AgroStock)
 
@@ -120,5 +120,5 @@ O front-end foi redesenhado com foco em usabilidade, consistência visual e segu
 
 ## Segurança
 
-As operações de dados são atendidas no backend. Configure credenciais próprias para o banco e não publique senhas de ambiente em arquivos versionados.
+As operações de dados são atendidas no backend. Configure credenciais próprias por variáveis de ambiente e nunca publique senhas reais. O banco de demonstração ainda contém um usuário inicial `admin` com senha padrão `admin123`; altere essa senha imediatamente após importar o banco. Em instalações novas, crie a primeira conta pela tela `criar_login.html`.
 
