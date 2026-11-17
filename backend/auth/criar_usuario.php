@@ -22,7 +22,7 @@ if ($input === null) {
 $nome = is_string($input['nome'] ?? null) ? trim($input['nome']) : '';
 $usuario = is_string($input['usuario'] ?? null) ? trim($input['usuario']) : '';
 $senha = is_string($input['senha'] ?? null) ? $input['senha'] : '';
-$nivel_acesso = 'operador';
+$nivel_acesso = 'admin';
 
 if ($nome === '' || $usuario === '' || $senha === '') {
     http_response_code(422);
