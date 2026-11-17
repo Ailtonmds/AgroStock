@@ -43,17 +43,10 @@
                     </div>
                     <div class="form-text">Mínimo 6 caracteres</div>
                 </div>
-                <div class="mb-3">
-                    <label for="nivel_acesso" class="form-label">Nível de acesso</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-shield"></i></span>
-                        <select class="form-select" id="nivel_acesso" name="nivel_acesso">
-                            <option value="admin">Administrador</option>
-                            <option value="operador">Operador</option>
-                        </select>
-                    </div>
-                </div>
-                <div id="mensagemErro" class="alert alert-danger d-none small"></div>
+                <div class="alert alert-info small" role="status">
+                A primeira conta será criada com perfil de administrador.
+            </div>
+            <div id="mensagemErro" class="alert alert-danger d-none small"></div>
                 <div id="mensagemSucesso" class="alert alert-success d-none small"></div>
                 <button type="submit" class="btn btn-success w-100 mt-3" id="btnCriar">
                     <span id="textoBotao">Criar usuário</span>
