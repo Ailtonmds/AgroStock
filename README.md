@@ -1,6 +1,6 @@
 # Sistema de Gerenciamento de Almoxarifado
 
-Aplicação web para gerenciamento de produtos, categorias, lotes, estoque, movimentações, alertas, relatórios e usuários.
+Aplicação web para gerenciamento de produtos, categorias, lotes, estoque, movimentações, alertas, relatórios e autenticação de um único usuário.
 
 ## Tecnologias
 
@@ -24,7 +24,6 @@ sistema-tcc-2026/
 │   ├── produtos/      # Endpoints de produtos
 │   │   └── buscar_por_codigo.php   # NOVO: busca produto por código de barras
 │   ├── relatorios/    # Endpoints de relatórios
-│   ├── usuarios/      # Endpoints de usuários
 │   └── dashboard.php  # Dados do painel
 ├── database/          # Scripts SQL do banco
 │   ├── database.sql
@@ -56,7 +55,7 @@ sistema-tcc-2026/
 └── README.md
 ```
 
-As telas ficam em `frontend/pages/`: `index.html` (login), `criar_login.html`, `dashboard.html`, `produtos.html`, `categorias.html`, `lotes.html`, `estoque.html`, `entrada.html`, `saida.html`, `movimentacoes.html`, `alertas.html`, `relatórios.html` e `usuarios.html`. O endereço `frontend/dashboard.html` redireciona para a tela de dashboard em `frontend/pages/dashboard.html`. Os endpoints PHP ficam em `backend/`, exceto o endpoint de criação inicial em `frontend/criar-login/criar_usuario.php`.
+As telas ficam em `frontend/pages/`: `index.html` (login), `criar_login.html`, `dashboard.html`, `produtos.html`, `categorias.html`, `lotes.html`, `estoque.html`, `entrada.html`, `saida.html`, `movimentacoes.html`, `alertas.html`, `relatórios.html`. O endereço `frontend/dashboard.html` redireciona para a tela de dashboard em `frontend/pages/dashboard.html`. Os endpoints PHP ficam em `backend/`, exceto o endpoint de criação inicial em `frontend/criar-login/criar_usuario.php`.
 
 ## Instalação local
 
@@ -64,11 +63,11 @@ As telas ficam em `frontend/pages/`: `index.html` (login), `criar_login.html`, `
 2. Inicie o Apache e o MySQL/MariaDB.
 3. Configure as variáveis de ambiente `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` e `DB_PASS` no Apache/PHP. Consulte `.env.example` como referência. O PHP não carrega arquivos `.env` automaticamente.
 4. Importe `database/database.sql` para criar as tabelas.
-5. Execute `database/migration_codigo_barras.sql` para adicionar a coluna `codigo_barras` à tabela `produtos` (necessário para o leitor de código de barras).
+5. Se o banco já existia antes desta atualização, execute `database/migration_usuario_unico.sql` para remover a coluna antiga de níveis de acesso. Em seguida, execute `database/migration_codigo_barras.sql` para adicionar a coluna `codigo_barras` à tabela `produtos` (necessário para o leitor de código de barras).
 6. Se precisar dos registros de demonstração, importe também `database/dados_teste.sql`.
 7. Abra `http://localhost/sistema-tcc-2026/frontend/` para iniciar o sistema. A página inicial redireciona para `frontend/pages/index.html`.
 
-O acesso de login é `http://localhost/sistema-tcc-2026/frontend/pages/index.html`. A tela de criação do primeiro administrador fica em `http://localhost/sistema-tcc-2026/frontend/pages/criar_login.html`. O primeiro cadastro recebe perfil de administrador; depois que a primeira conta existir, o endpoint público bloqueia novos cadastros.
+O acesso de login é `http://localhost/sistema-tcc-2026/frontend/pages/index.html`. A tela de criação do primeiro administrador fica em `http://localhost/sistema-tcc-2026/frontend/pages/criar_login.html`. O sistema permite somente a criação da primeira conta. Depois que ela existir, novos cadastros são bloqueados. Não existem níveis de acesso nem gerenciamento de múltiplos usuários.
 
 ## Leitor de código de barras USB (AgroStock)
 
