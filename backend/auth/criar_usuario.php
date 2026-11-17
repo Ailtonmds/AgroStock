@@ -3,8 +3,8 @@
  * Criar usuário - Retorna JSON para comunicação via fetch()
  */
 
-require_once __DIR__ . '/../../backend/config/conexao.php';
-require_once __DIR__ . '/../../backend/config/config.php';
+require_once __DIR__ . '/../config/conexao.php';
+require_once __DIR__ . '/../config/config.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -22,7 +22,6 @@ if ($input === null) {
 $nome = is_string($input['nome'] ?? null) ? trim($input['nome']) : '';
 $usuario = is_string($input['usuario'] ?? null) ? trim($input['usuario']) : '';
 $senha = is_string($input['senha'] ?? null) ? $input['senha'] : '';
-$nivel_acesso = 'admin';
 
 if ($nome === '' || $usuario === '' || $senha === '') {
     http_response_code(422);
@@ -47,12 +46,11 @@ try {
 
     $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
 
-    $stmt = $pdo->prepare('INSERT INTO usuarios (nome, usuario, senha_hash, nivel_acesso) VALUES (:nome, :usuario, :senha_hash, :nivel_acesso)');
+    $stmt = $pdo->prepare('INSERT INTO usuarios (nome, usuario, senha_hash) VALUES (:nome, :usuario, :senha_hash)');
     $stmt->execute([
         ':nome' => $nome,
         ':usuario' => $usuario,
-        ':senha_hash' => $senhaHash,
-        ':nivel_acesso' => $nivel_acesso
+        ':senha_hash' => $senhaHash
     ]);
 
     echo json_encode([
