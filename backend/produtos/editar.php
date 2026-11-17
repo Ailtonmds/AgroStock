@@ -59,6 +59,20 @@ try {
         exit;
     }
 
+    // Validar duplicidade de código de barras (se informado), excluindo o próprio produto
+    if ($codigo_barras !== '' && $codigo_barras !== null) {
+        $chk = $pdo->prepare('SELECT id FROM produtos WHERE codigo_barras = :codigo AND id <> :id');
+        $chk->execute(['codigo' => $codigo_barras, 'id' => $id]);
+        if ($chk->fetch()) {
+            http_response_code(409);
+            echo json_encode([
+                'sucesso' => false,
+                'mensagem' => 'Já existe outro produto cadastrado com este código de barras.'
+            ]);
+            exit;
+        }
+    }
+
     $stmt = $pdo->prepare(
         'UPDATE produtos 
          SET categoria_id = :categoria_id, nome = :nome, descricao = :descricao, 

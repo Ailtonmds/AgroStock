@@ -13,7 +13,7 @@
     <!-- Sidebar (estilo Tabler) -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-brand">
-            <img src="../assets/img/logo_branca.png" alt="Logo AgroStock">
+            <img src="../assets/img/logo.png" alt="Logo AgroStock">
             <span>AgroStock</span>
         </div>
 
@@ -121,6 +121,9 @@
                     <div class="card border-0 shadow-sm">
                         <div class="card-body p-4 p-md-5">
                             <form id="formSaida" novalidate>
+                                <!-- Feedback visual e sonoro do scanner -->
+                                <div id="scanner-feedback-container" class="scanner-feedback d-none"></div>
+
                                 <!-- Campo de leitura por código de barras (scanner USB) -->
                                 <div class="row g-3 mb-4">
                                     <div class="col-md-6">
@@ -210,6 +213,8 @@
     <script src="../assets/js/api.js"></script>
     <script src="../assets/js/utils.js"></script>
     <script src="../assets/js/scan-to-input.js"></script>
+    <script src="../assets/js/scanner-feedback.js"></script>
+    <script src="../assets/js/codigo-barras-validacao.js"></script>
     <script src="../assets/js/estoque_saida.js"></script>
     <script>
         // Inicialização da sidebar (menu mobile)

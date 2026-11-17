@@ -39,8 +39,10 @@ async function carregarDashboard() {
         // Atualizar movimentações recentes
         atualizarTabelaMovimentacoes(d.movimentacoes_recentes);
 
-        // Atualizar gráficos
-        atualizarGraficos(d.graficos);
+        // Atualizar gráficos (somente se houver dados válidos)
+        if (d.graficos && typeof d.graficos === 'object') {
+            atualizarGraficos(d.graficos);
+        }
 
     } catch (error) {
         console.error('Erro ao carregar dashboard:', error);

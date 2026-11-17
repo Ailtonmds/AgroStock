@@ -22,7 +22,8 @@ async function carregarAlertas() {
             atualizarTabelaEstoqueBaixo(dataBaixo.dados);
             document.getElementById('totalEstoqueBaixo').textContent = dataBaixo.total ?? 0;
         } else {
-            mostrarToast('Erro ao carregar estoque baixo.', 'danger');
+            estadoVazio(document.getElementById('tbodyEstoqueBaixo'), 6, 'Não foi possível carregar o estoque baixo');
+            mostrarToast(dataBaixo.mensagem || 'Erro ao carregar estoque baixo.', 'danger');
         }
 
         // Validade (próximos e vencidos)
@@ -35,10 +36,12 @@ async function carregarAlertas() {
             document.getElementById('totalProximosValidade').textContent = dataValidade.total_proximos ?? 0;
             document.getElementById('totalVencidos').textContent = dataValidade.total_vencidos ?? 0;
         } else {
-            mostrarToast('Erro ao carregar alertas de validade.', 'danger');
+            estadoVazio(document.getElementById('tbodyProximosValidade'), 6, 'Não foi possível carregar os lotes próximos do vencimento');
+            estadoVazio(document.getElementById('tbodyVencidos'), 6, 'Não foi possível carregar os lotes vencidos');
+            mostrarToast(dataValidade.mensagem || 'Erro ao carregar alertas de validade.', 'danger');
         }
 
-        const total = (dataBaixo.total || 0) + (dataValidade.total_proximos || 0) + (dataValidade.total_vencidos || 0);
+        const total = (Number(dataBaixo.total) || 0) + (Number(dataValidade.total_proximos) || 0) + (Number(dataValidade.total_vencidos) || 0);
         document.getElementById('totalAlertas').textContent = total;
 
     } catch (e) {

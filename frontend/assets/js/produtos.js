@@ -273,6 +273,20 @@ async function salvarProduto(e) {
     const id = document.getElementById('produtoId').value;
     const isEdit = id !== '';
 
+    // Validar código de barras antes de salvar (formato e duplicidade)
+    const codigoInput = document.getElementById('codigo_barras');
+    const codigoBarras = codigoInput ? codigoInput.value.trim() : '';
+    if (codigoBarras !== '') {
+        const validacao = window.CodigoBarrasValidacao
+            ? window.CodigoBarrasValidacao.validar(codigoBarras)
+            : { valido: true };
+        if (!validacao.valido) {
+            mostrarToast('Código de barras inválido: ' + validacao.motivo, 'warning');
+            codigoInput.focus();
+            return;
+        }
+    }
+
     const formData = new FormData(e.target);
     const dados = Object.fromEntries(formData.entries());
     dados.ativo = dados.ativo === 'on' ? 1 : 0;

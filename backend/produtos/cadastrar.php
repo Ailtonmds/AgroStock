@@ -49,6 +49,20 @@ try {
         exit;
     }
 
+    // Validar duplicidade de código de barras (se informado)
+    if ($codigo_barras !== '' && $codigo_barras !== null) {
+        $chk = $pdo->prepare('SELECT id FROM produtos WHERE codigo_barras = :codigo');
+        $chk->execute(['codigo' => $codigo_barras]);
+        if ($chk->fetch()) {
+            http_response_code(409);
+            echo json_encode([
+                'sucesso' => false,
+                'mensagem' => 'Já existe um produto cadastrado com este código de barras.'
+            ]);
+            exit;
+        }
+    }
+
     $stmt = $pdo->prepare(
         'INSERT INTO produtos (categoria_id, nome, descricao, unidade_medida, estoque_minimo, localizacao, ativo, codigo_barras) 
          VALUES (:categoria_id, :nome, :descricao, :unidade_medida, :estoque_minimo, :localizacao, :ativo, :codigo_barras)'
