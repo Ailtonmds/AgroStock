@@ -22,7 +22,6 @@ async function carregarDashboard() {
 
         if (usuario.id) sessionStorage.setItem('usuario_id', String(usuario.id));
         if (usuario.nome) sessionStorage.setItem('usuario_nome', usuario.nome);
-        if (usuario.nivel_acesso) sessionStorage.setItem('nivel_acesso', usuario.nivel_acesso);
 
         definirTexto('statTotalProdutos', estatisticas.total_produtos);
         definirTexto('statTotalItens', estatisticas.total_itens_estoque);
