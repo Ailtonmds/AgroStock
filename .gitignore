@@ -1,0 +1,57 @@
+# Segredos e configurações locais
+.env
+.env.*
+!.env.example
+backend/config/conexao.local.php
+backend/config/config.local.php
+config.local.php
+secrets/
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Dependências PHP
+/vendor/
+/backend/vendor/
+
+# Logs e arquivos temporários
+*.log
+*.tmp
+*.temp
+*.cache
+/cache/
+/tmp/
+/temp/
+
+# Backups e dumps locais de banco de dados
+*.sql.gz
+*.dump
+*.bak
+*.backup
+/database/local/
+database/*local*.sql
+database/*backup*.sql
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editores e IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testes e cobertura
+.phpunit.cache/
+.phpunit.result.cache
+coverage/
+.nyc_output/
+
+# Dependências e builds JavaScript, caso sejam adicionados
+node_modules/
+dist/
+build/
