@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS usuarios (
     nome VARCHAR(150) NOT NULL,
     usuario VARCHAR(100) NOT NULL UNIQUE,
     senha_hash VARCHAR(255) NOT NULL,
-    nivel_acesso ENUM('admin', 'operador') NOT NULL DEFAULT 'operador',
     ativo BOOLEAN NOT NULL DEFAULT TRUE,
     criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
@@ -107,8 +106,8 @@ CREATE INDEX idx_movimentacoes_tipo ON movimentacoes(tipo);
 -- ========================================
 
 -- Usuário admin padrão (senha: admin123)
-INSERT IGNORE INTO usuarios (nome, usuario, senha_hash, nivel_acesso) VALUES
-('Administrador', 'admin', '$2y$10$uy5qA89j.U9xlITZ.1kUsull95YEV6ewap.onR0sx0C.ZLKTaMRLm', 'admin');
+INSERT IGNORE INTO usuarios (nome, usuario, senha_hash) VALUES
+('Administrador', 'admin', '$2y$10$uy5qA89j.U9xlITZ.1kUsull95YEV6ewap.onR0sx0C.ZLKTaMRLm');
 
 UPDATE usuarios
 SET senha_hash = '$2y$10$uy5qA89j.U9xlITZ.1kUsull95YEV6ewap.onR0sx0C.ZLKTaMRLm'
