@@ -36,11 +36,6 @@ if (strlen($senha) < 6) {
     exit;
 }
 
-if (!in_array($nivel_acesso, ['admin', 'operador'])) {
-    http_response_code(422);
-    echo json_encode(['sucesso' => false, 'mensagem' => 'Nível de acesso inválido.']);
-    exit;
-}
 
 try {
     $stmt = $pdo->query('SELECT COUNT(*) FROM usuarios');
