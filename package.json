@@ -1,0 +1,27 @@
+{
+  "name": "sistema-tcc-2026",
+  "version": "1.0.0",
+  "description": "Aplicação web para gerenciamento de produtos, categorias, lotes, estoque, movimentações, alertas, relatórios e usuários.",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:scanner": "playwright test tests/scanner.test.js",
+    "test:pages": "playwright test tests/paginas.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ailtonmds/sistema-tcc-2026.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Ailtonmds/sistema-tcc-2026/issues"
+  },
+  "homepage": "https://github.com/Ailtonmds/sistema-tcc-2026#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "playwright": "^1.65.1"
+  }
+}

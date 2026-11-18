@@ -5,11 +5,19 @@ if (realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) {
     exit;
 }
 
+<<<<<<< HEAD
 $host = getenv('DB_HOST') !== false ? getenv('DB_HOST') : '127.0.0.1';
 $port = getenv('DB_PORT') !== false ? getenv('DB_PORT') : '3306';
 $db = getenv('DB_NAME') !== false ? getenv('DB_NAME') : 'almoxarifado';
 $user = getenv('DB_USER') !== false ? getenv('DB_USER') : 'root';
 $pass = getenv('DB_PASS') !== false ? getenv('DB_PASS') : '';
+=======
+$host = getenv('DB_HOST') ?: '127.0.0.1';
+$port = getenv('DB_PORT') ?: '3306';
+$db = getenv('DB_DATABASE') ?: 'almoxarifado';
+$user = getenv('DB_USERNAME') ?: 'ailton';
+$pass = getenv('DB_PASSWORD') ?: 'cruzeiro';
+>>>>>>> melhoria-frontend-agrostock
 
 $dsnServidor = "mysql:host={$host};port={$port};charset=utf8mb4";
 $opcoes = [

@@ -22,6 +22,10 @@ if ($input === null) {
 $nome = is_string($input['nome'] ?? null) ? trim($input['nome']) : '';
 $usuario = is_string($input['usuario'] ?? null) ? trim($input['usuario']) : '';
 $senha = is_string($input['senha'] ?? null) ? $input['senha'] : '';
+<<<<<<< HEAD
+=======
+$nivel_acesso = 'usuario';
+>>>>>>> melhoria-frontend-agrostock
 
 if ($nome === '' || $usuario === '' || $senha === '') {
     http_response_code(422);
@@ -35,10 +39,16 @@ if (strlen($senha) < 6) {
     exit;
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> melhoria-frontend-agrostock
 try {
-    $stmt = $pdo->query('SELECT COUNT(*) FROM usuarios');
-    if ((int) $stmt->fetchColumn() > 0) {
+    $pdo->beginTransaction();
+
+    $stmt = $pdo->query('SELECT id FROM usuarios LIMIT 1 FOR UPDATE');
+    if ($stmt->fetch()) {
+        $pdo->rollBack();
         http_response_code(403);
         echo json_encode(['sucesso' => false, 'mensagem' => 'O cadastro público está disponível somente para o primeiro usuário.']);
         exit;
@@ -48,16 +58,28 @@ try {
 
     $stmt = $pdo->prepare('INSERT INTO usuarios (nome, usuario, senha_hash) VALUES (:nome, :usuario, :senha_hash)');
     $stmt->execute([
+<<<<<<< HEAD
         ':nome' => $nome,
         ':usuario' => $usuario,
         ':senha_hash' => $senhaHash
+=======
+        'nome' => $nome,
+        'usuario' => $usuario,
+        'senha_hash' => $senhaHash,
+        'nivel_acesso' => $nivel_acesso
+>>>>>>> melhoria-frontend-agrostock
     ]);
+
+    $pdo->commit();
 
     echo json_encode([
         'sucesso' => true,
         'mensagem' => 'Usuário "' . htmlspecialchars($usuario, ENT_QUOTES, 'UTF-8') . '" criado com sucesso!'
     ]);
 } catch (PDOException $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     http_response_code(500);
     if ($e->getCode() === '23000') {
         http_response_code(409);

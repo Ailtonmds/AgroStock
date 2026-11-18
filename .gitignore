@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Segredos e configurações locais
 .env
 .env.*
@@ -55,3 +56,9 @@ coverage/
 node_modules/
 dist/
 build/
+=======
+conexao.php
+node_modules/
+test-results/
+playwright-report/
+>>>>>>> melhoria-frontend-agrostock

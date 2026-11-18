@@ -28,7 +28,7 @@ try {
         INNER JOIN categorias c ON p.categoria_id = c.id
         LEFT JOIN produto_lote pl ON p.id = pl.produto_id
         WHERE p.ativo = 1
-        GROUP BY p.id
+        GROUP BY p.id, p.nome, p.unidade_medida, p.estoque_minimo, p.localizacao, c.nome
         HAVING COALESCE(SUM(pl.quantidade), 0) <= p.estoque_minimo
         ORDER BY p.nome
     ';

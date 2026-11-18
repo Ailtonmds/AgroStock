@@ -159,6 +159,10 @@ try {
             'usuario' => [
                 'id' => (int) $_SESSION['usuario_id'],
                 'nome' => $_SESSION['nome'] ?? $_SESSION['usuario'] ?? 'Usuário',
+<<<<<<< HEAD
+=======
+                'nivel_acesso' => $_SESSION['nivel_acesso'] ?? 'usuario'
+>>>>>>> melhoria-frontend-agrostock
             ],
             'estatisticas' => [
                 'total_produtos' => $totalProdutos,

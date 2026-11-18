@@ -55,6 +55,7 @@ try {
         exit;
     }
 
+<<<<<<< HEAD
     $stmt = $pdo->prepare('DELETE FROM produtos WHERE id = :id');
     $stmt->execute(['id' => $id]);
 
@@ -63,6 +64,65 @@ try {
         'mensagem' => 'Produto excluído permanentemente.',
         'dados' => ['acao' => 'excluido']
     ], JSON_UNESCAPED_UNICODE);
+=======
+    // Exclusão física (apenas se não houver vínculos ou forçar)
+    if (!$temLotes && !$temMovimentacoes) {
+        // Não há vínculos: excluir fisicamente
+        $pdo->beginTransaction();
+        
+        $stmt = $pdo->prepare('DELETE FROM produto_lote WHERE produto_id = :id');
+        $stmt->execute(['id' => $id]);
+        
+        $stmt = $pdo->prepare('DELETE FROM produtos WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+        
+        $pdo->commit();
+
+        echo json_encode([
+            'sucesso' => true,
+            'mensagem' => 'Produto excluído permanentemente.',
+            'dados' => ['acao' => 'excluido']
+        ]);
+        exit;
+    }
+
+    if ($forcar) {
+        // Forçar exclusão mesmo com vínculos
+        $pdo->beginTransaction();
+        
+        // Excluir em ordem respeitando chaves estrangeiras:
+        // 1. produto_lote (referencia produtos e lotes)
+        // 2. movimentacoes (referencia produtos, lotes e usuarios)
+        // 3. produtos
+        $stmt = $pdo->prepare('DELETE FROM produto_lote WHERE produto_id = :id');
+        $stmt->execute(['id' => $id]);
+        
+        $stmt = $pdo->prepare('DELETE FROM movimentacoes WHERE produto_id = :id');
+        $stmt->execute(['id' => $id]);
+        
+        $stmt = $pdo->prepare('DELETE FROM produtos WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+        
+        $pdo->commit();
+
+        echo json_encode([
+            'sucesso' => true,
+            'mensagem' => 'Produto excluído permanentemente (forçado).',
+            'dados' => ['acao' => 'excluido']
+        ]);
+        exit;
+    }
+
+    // Há vínculos e não forçar: apenas desativar
+    $stmt = $pdo->prepare('UPDATE produtos SET ativo = 0 WHERE id = :id');
+    $stmt->execute(['id' => $id]);
+
+    echo json_encode([
+        'sucesso' => true,
+        'mensagem' => 'Produto desativado (possui lotes/movimentações vinculados).',
+        'dados' => ['acao' => 'desativado']
+    ]);
+>>>>>>> melhoria-frontend-agrostock
 } catch (PDOException $e) {
     error_log('AgroStock: erro ao excluir produto: ' . $e->getMessage());
     http_response_code(500);

@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     carregarAlertas();
 
-    document.getElementById('btnLogout').addEventListener('click', logout);
+    document.getElementById('btnLogout')?.addEventListener('click', logout);
     document.getElementById('btnAtualizarAlertas').addEventListener('click', carregarAlertas);
 });
 
@@ -22,7 +22,8 @@ async function carregarAlertas() {
             atualizarTabelaEstoqueBaixo(dataBaixo.dados);
             document.getElementById('totalEstoqueBaixo').textContent = dataBaixo.total ?? 0;
         } else {
-            mostrarToast('Erro ao carregar estoque baixo.', 'danger');
+            estadoVazio(document.getElementById('tbodyEstoqueBaixo'), 6, 'Não foi possível carregar o estoque baixo');
+            mostrarToast(dataBaixo.mensagem || 'Erro ao carregar estoque baixo.', 'danger');
         }
 
         // Validade (próximos e vencidos)
@@ -35,10 +36,12 @@ async function carregarAlertas() {
             document.getElementById('totalProximosValidade').textContent = dataValidade.total_proximos ?? 0;
             document.getElementById('totalVencidos').textContent = dataValidade.total_vencidos ?? 0;
         } else {
-            mostrarToast('Erro ao carregar alertas de validade.', 'danger');
+            estadoVazio(document.getElementById('tbodyProximosValidade'), 6, 'Não foi possível carregar os lotes próximos do vencimento');
+            estadoVazio(document.getElementById('tbodyVencidos'), 6, 'Não foi possível carregar os lotes vencidos');
+            mostrarToast(dataValidade.mensagem || 'Erro ao carregar alertas de validade.', 'danger');
         }
 
-        const total = (dataBaixo.total || 0) + (dataValidade.total_proximos || 0) + (dataValidade.total_vencidos || 0);
+        const total = (Number(dataBaixo.total) || 0) + (Number(dataValidade.total_proximos) || 0) + (Number(dataValidade.total_vencidos) || 0);
         document.getElementById('totalAlertas').textContent = total;
 
     } catch (e) {
@@ -63,7 +66,7 @@ function atualizarTabelaEstoqueBaixo(produtos) {
         const tr = document.createElement('tr');
         tr.className = 'table-warning';
 
-        tr.appendChild(montarCelula(`<strong>${escapeHtml(p.nome)}</strong>`));
+        tr.appendChild(montarCelula(escapeHtml(p.nome)));
         tr.appendChild(montarCelula(escapeHtml(p.categoria_nome)));
 
         const qtdCelula = document.createElement('td');
@@ -92,10 +95,10 @@ function atualizarTabelaProximos(lotes) {
         const tr = document.createElement('tr');
         tr.className = 'table-warning';
 
-        tr.appendChild(montarCelula(`<strong>${escapeHtml(l.produto_nome)}</strong>`));
+        tr.appendChild(montarCelula(escapeHtml(l.produto_nome)));
         tr.appendChild(montarCelula(escapeHtml(l.categoria_nome)));
         tr.appendChild(montarCelula(escapeHtml(l.numero_lote)));
-        tr.appendChild(montarCelula(formatarData(l.data_validade)));
+        tr.appendChild(montarCelula(formatarDataAlerta(l.data_validade)));
 
         const diasCelula = document.createElement('td');
         diasCelula.className = 'text-center';
@@ -124,10 +127,10 @@ function atualizarTabelaVencidos(lotes) {
         const tr = document.createElement('tr');
         tr.className = 'table-danger';
 
-        tr.appendChild(montarCelula(`<strong>${escapeHtml(l.produto_nome)}</strong>`));
+        tr.appendChild(montarCelula(escapeHtml(l.produto_nome)));
         tr.appendChild(montarCelula(escapeHtml(l.categoria_nome)));
         tr.appendChild(montarCelula(escapeHtml(l.numero_lote)));
-        tr.appendChild(montarCelula(formatarData(l.data_validade)));
+        tr.appendChild(montarCelula(formatarDataAlerta(l.data_validade)));
 
         const diasCelula = document.createElement('td');
         diasCelula.className = 'text-center';
@@ -147,10 +150,8 @@ async function logout() {
     await window.logout();
 }
 
-function formatarData(dataString) {
+function formatarDataAlerta(dataString) {
     return window.formatarDataCurta(dataString);
 }
 
-function mostrarToast(mensagem, tipo = 'info') {
-    window.mostrarToast(mensagem, tipo);
-}
+

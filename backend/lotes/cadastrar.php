@@ -1,6 +1,7 @@
 <?php
 /**
  * Cadastrar lote e vincular a produto
+ * Gera automaticamente o código de barras interno (AG00000001) para cada novo lote.
  */
 
 require_once __DIR__ . '/../config/conexao.php';
@@ -44,26 +45,62 @@ if ($data_fabricacao !== null && $data_fabricacao !== '' && !DateTime::createFro
     exit;
 }
 
+/**
+ * Gera o próximo código interno de lote seguindo o padrão AG00000001.
+ * O número é baseado no maior identificador interno já existente, somando 1.
+ */
+function gerarCodigoInternoLote(\PDO $pdo): string
+{
+    $stmt = $pdo->query("SELECT MAX(codigo_barras_interno) AS ultimo FROM lotes WHERE codigo_barras_interno IS NOT NULL");
+    $row = $stmt->fetch();
+    $ultimo = $row['ultimo'] ?? null;
+
+    $numero = 1;
+    if ($ultimo !== null && $ultimo !== '') {
+        $numerico = preg_replace('/\D/', '', $ultimo);
+        if ($numerico !== '') {
+            $numero = (int) $numerico + 1;
+        }
+    }
+
+    return 'AG' . str_pad((string) $numero, 8, '0', STR_PAD_LEFT);
+}
+
 try {
+    $pdo->beginTransaction();
+
     // Verificar se produto existe
-    $stmt = $pdo->prepare('SELECT id FROM produtos WHERE id = :id AND ativo = 1');
+    $stmt = $pdo->prepare('SELECT id FROM produtos WHERE id = :id AND ativo = 1 FOR UPDATE');
     $stmt->execute(['id' => $produto_id]);
     if (!$stmt->fetch()) {
+        $pdo->rollBack();
         http_response_code(404);
         echo json_encode(['sucesso' => false, 'mensagem' => 'Produto não encontrado ou inativo.']);
         exit;
     }
 
-    $pdo->beginTransaction();
-
-    // Verificar se lote já existe
-    $stmt = $pdo->prepare('SELECT id FROM lotes WHERE numero_lote = :numero_lote');
+    // Verificar se lote já existe (número do fabricante)
+    $stmt = $pdo->prepare('SELECT id, codigo_barras_interno FROM lotes WHERE numero_lote = :numero_lote FOR UPDATE');
     $stmt->execute(['numero_lote' => $numero_lote]);
     $lote = $stmt->fetch();
 
     if ($lote) {
         $lote_id = $lote['id'];
-        
+        $codigoInterno = $lote['codigo_barras_interno'];
+
+        // Se o lote existente ainda não possui código interno, gera agora
+        if ($codigoInterno === null || $codigoInterno === '') {
+            do {
+                $codigoInterno = gerarCodigoInternoLote($pdo);
+                // Verificar se já existe (proteção contra concorrência)
+                $chk = $pdo->prepare('SELECT id FROM lotes WHERE codigo_barras_interno = :codigo FOR UPDATE');
+                $chk->execute(['codigo' => $codigoInterno]);
+            } while ($chk->fetch());
+
+            $stmt = $pdo->prepare('UPDATE lotes SET codigo_barras_interno = :codigo WHERE id = :id');
+            $stmt->execute(['codigo' => $codigoInterno, 'id' => $lote_id]);
+        }
+
         // Verificar se já está vinculado a este produto
         $stmt = $pdo->prepare('SELECT id, quantidade FROM produto_lote WHERE produto_id = :produto_id AND lote_id = :lote_id');
         $stmt->execute(['produto_id' => $produto_id, 'lote_id' => $lote_id]);
@@ -80,10 +117,18 @@ try {
             $stmt->execute(['produto_id' => $produto_id, 'lote_id' => $lote_id, 'quantidade' => $quantidade]);
         }
     } else {
-        // Criar novo lote
-        $stmt = $pdo->prepare('INSERT INTO lotes (numero_lote, data_fabricacao, data_validade) VALUES (:numero_lote, :data_fabricacao, :data_validade)');
+        // Gerar código interno exclusivo antes de criar o lote (protege contra concorrência)
+        do {
+            $codigoInterno = gerarCodigoInternoLote($pdo);
+            $chk = $pdo->prepare('SELECT id FROM lotes WHERE codigo_barras_interno = :codigo FOR UPDATE');
+            $chk->execute(['codigo' => $codigoInterno]);
+        } while ($chk->fetch());
+
+        // Criar novo lote com código interno
+        $stmt = $pdo->prepare('INSERT INTO lotes (numero_lote, codigo_barras_interno, data_fabricacao, data_validade) VALUES (:numero_lote, :codigo_interno, :data_fabricacao, :data_validade)');
         $stmt->execute([
             'numero_lote' => $numero_lote,
+            'codigo_interno' => $codigoInterno,
             'data_fabricacao' => $data_fabricacao ?: null,
             'data_validade' => $data_validade
         ]);
@@ -99,16 +144,19 @@ try {
     echo json_encode([
         'sucesso' => true,
         'mensagem' => 'Lote cadastrado/vinculado com sucesso.',
-        'dados' => ['lote_id' => $lote_id]
+        'dados' => [
+            'lote_id' => $lote_id,
+            'codigo_barras_interno' => $codigoInterno
+        ]
     ]);
 } catch (PDOException $e) {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
-    // Verificar erro de duplicata
+    // Verificar erro de duplicata (número de lote ou código interno)
     if ($e->getCode() === '23000') {
         http_response_code(409);
-        echo json_encode(['sucesso' => false, 'mensagem' => 'Número de lote já existe.']);
+        echo json_encode(['sucesso' => false, 'mensagem' => 'Número de lote ou código interno já existe.']);
     } else {
         http_response_code(500);
         echo json_encode(['sucesso' => false, 'mensagem' => 'Erro ao cadastrar lote.']);

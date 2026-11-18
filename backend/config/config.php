@@ -5,10 +5,15 @@ if (realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) {
     exit;
 }
 
+<<<<<<< HEAD
 $isHttps = (
     (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off')
     || (($_SERVER['SERVER_PORT'] ?? null) == 443)
 );
+=======
+// URL base da API (ajustar conforme necessário)
+define('API_BASE_URL', '/backend');
+>>>>>>> melhoria-frontend-agrostock
 
 ini_set('session.cookie_httponly', '1');
 ini_set('session.use_strict_mode', '1');
@@ -39,5 +44,9 @@ set_exception_handler(function (Throwable $exception): void {
     echo json_encode([
         'sucesso' => false,
         'mensagem' => 'Erro interno ao processar a requisição.'
+<<<<<<< HEAD
     ], JSON_UNESCAPED_UNICODE);
+=======
+    ]);
+>>>>>>> melhoria-frontend-agrostock
 });

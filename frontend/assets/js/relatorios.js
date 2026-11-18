@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     carregarProdutosParaFiltros();
     carregarRelatorios();
 
-    document.getElementById('btnLogout').addEventListener('click', logout);
+    document.getElementById('btnLogout')?.addEventListener('click', logout);
     document.getElementById('btnAtualizarRelatorios').addEventListener('click', carregarRelatorios);
     document.getElementById('formFiltroMov').addEventListener('submit', (e) => {
         e.preventDefault();
@@ -97,7 +97,7 @@ function atualizarTabelaRelEstoque(produtos) {
 
         const tr = document.createElement('tr');
 
-        tr.appendChild(montarCelula(`<strong>${escapeHtml(p.nome)}</strong>`));
+        tr.appendChild(montarCelula(escapeHtml(p.nome)));
         tr.appendChild(montarCelula(escapeHtml(p.categoria)));
         tr.appendChild(montarCelula(p.unidade_medida));
         tr.appendChild(montarCelula(p.estoque_minimo));
@@ -207,7 +207,7 @@ function atualizarTabelaRelMovimentacoes(movimentacoes) {
         const tr = document.createElement('tr');
 
         tr.appendChild(montarCelula(formatarDataHora(mov.data_movimentacao)));
-        tr.appendChild(montarCelula(`<strong>${escapeHtml(mov.produto_nome)}</strong>`));
+        tr.appendChild(montarCelula(escapeHtml(mov.produto_nome)));
         tr.appendChild(montarCelula(escapeHtml(mov.numero_lote)));
 
         const tipoCelula = document.createElement('td');
@@ -278,11 +278,11 @@ function atualizarTabelaRelValidade(lotes) {
         if (l.status_validade === 'vencido') tr.className = 'table-danger';
         else if (l.status_validade === 'proximo') tr.className = 'table-warning';
 
-        tr.appendChild(montarCelula(`<strong>${escapeHtml(l.produto_nome)}</strong>`));
+        tr.appendChild(montarCelula(escapeHtml(l.produto_nome)));
         tr.appendChild(montarCelula(escapeHtml(l.categoria_nome)));
         tr.appendChild(montarCelula(escapeHtml(l.numero_lote)));
-        tr.appendChild(montarCelula(formatarData(l.data_fabricacao)));
-        tr.appendChild(montarCelula(formatarData(l.data_validade)));
+        tr.appendChild(montarCelula(formatarDataRel(l.data_fabricacao)));
+        tr.appendChild(montarCelula(formatarDataRel(l.data_validade)));
         tr.appendChild(montarCelula(l.dias_restantes >= 0 ? l.dias_restantes : Math.abs(l.dias_restantes)));
         tr.appendChild(montarCelula(l.quantidade));
 
@@ -302,7 +302,7 @@ async function logout() {
     await window.logout();
 }
 
-function formatarData(dataString) {
+function formatarDataRel(dataString) {
     return window.formatarDataCurta(dataString);
 }
 
@@ -317,6 +317,4 @@ function formatarDataHora(dataString) {
     return window.formatarData(dataString, true);
 }
 
-function mostrarToast(mensagem, tipo = 'info') {
-    window.mostrarToast(mensagem, tipo);
-}
+

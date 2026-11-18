@@ -2,12 +2,13 @@
 
 let buscaTimeout = null;
 let categoriasCache = [];
+let codigosFornecedorState = []; // { codigo_barras, origem }
 
 document.addEventListener('DOMContentLoaded', () => {
     carregarCategorias();
     carregarProdutos();
 
-    document.getElementById('btnLogout').addEventListener('click', logout);
+    document.getElementById('btnLogout')?.addEventListener('click', logout);
     document.getElementById('formProduto').addEventListener('submit', salvarProduto);
     document.getElementById('btnBuscar').addEventListener('click', carregarProdutos);
     document.getElementById('btnLimparBusca').addEventListener('click', () => {
@@ -20,12 +21,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('filtroStatus').addEventListener('change', carregarProdutos);
     document.getElementById('buscaProduto').addEventListener('input', debounceBusca);
 
+    // Gerenciar códigos de fornecedor
+    document.getElementById('btnAdicionarCodigoFornecedor').addEventListener('click', adicionarCodigoFornecedor);
+
     // Limpar formulário ao fechar modal
     document.getElementById('modalProduto').addEventListener('hidden.bs.modal', () => {
         document.getElementById('formProduto').reset();
         document.getElementById('produtoId').value = '';
         document.getElementById('modalProdutoLabel').textContent = 'Novo Produto';
         document.getElementById('btnSalvarProduto').innerHTML = '<i class="bi bi-check-lg me-1"></i>Salvar';
+        codigosFornecedorState = [];
+        document.getElementById('tbodyCodigosFornecedor').innerHTML = '';
+        document.getElementById('codigos_fornecedor').value = '';
     });
 });
 
@@ -49,12 +56,84 @@ function popularSelectCategorias() {
     const selectCategoria = document.getElementById('categoria_id');
     const selectFiltro = document.getElementById('filtroCategoria');
 
-    const options = categoriasCache.filter(c => c.ativo).map(c =>
+    // Select do formulário: mostra todas as categorias (ativa e inativa)
+    // para não bloquear edição de produtos com categoria desativada
+    const optionsForm = categoriasCache.map(c =>
         `<option value="${escapeHtml(c.id)}">${escapeHtml(c.nome)}</option>`
     ).join('');
 
-    selectCategoria.innerHTML = '<option value="">Selecione</option>' + options;
-    selectFiltro.innerHTML = '<option value="">Todas as categorias</option>' + options;
+    // Select de filtro: mostra apenas categorias ativas
+    const optionsFiltro = categoriasCache.filter(c => c.ativo).map(c =>
+        `<option value="${escapeHtml(c.id)}">${escapeHtml(c.nome)}</option>`
+    ).join('');
+
+    selectCategoria.innerHTML = '<option value="">Selecione</option>' + optionsForm;
+    selectFiltro.innerHTML = '<option value="">Todas as categorias</option>' + optionsFiltro;
+}
+
+function renderizarCodigosFornecedor() {
+    const tbody = document.getElementById('tbodyCodigosFornecedor');
+    tbody.innerHTML = '';
+    codigosFornecedorState.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${escapeHtml(item.codigo_barras)}</td>
+            <td>${escapeHtml(item.origem || '-')}</td>
+            <td class="text-end">
+                <button class="btn btn-sm btn-outline-danger" type="button" onclick="removerCodigoFornecedor(${index})" title="Remover">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+    document.getElementById('codigos_fornecedor').value = JSON.stringify(codigosFornecedorState);
+}
+
+function adicionarCodigoFornecedor() {
+    const codigo = document.getElementById('cf_codigo_barras').value.trim();
+    const origem = document.getElementById('cf_origem').value.trim();
+
+    if (codigo === '') {
+        mostrarToast('Informe o código de barras.', 'warning');
+        return;
+    }
+
+    if (codigosFornecedorState.some(c => c.codigo_barras === codigo)) {
+        mostrarToast('Este código já foi adicionado.', 'warning');
+        return;
+    }
+
+    codigosFornecedorState.push({ codigo_barras: codigo, origem: origem });
+    document.getElementById('cf_codigo_barras').value = '';
+    document.getElementById('cf_origem').value = '';
+    renderizarCodigosFornecedor();
+}
+
+window.removerCodigoFornecedor = function (index) {
+    codigosFornecedorState.splice(index, 1);
+    renderizarCodigosFornecedor();
+};
+
+async function carregarCodigosFornecedor(produtoId) {
+    try {
+        const response = await apiFetch(`produtos/codigos_fornecedores.php?produto_id=${produtoId}`);
+        const data = await apiJson(response);
+        if (data.sucesso) {
+            codigosFornecedorState = (data.dados || []).map(c => ({
+                codigo_barras: c.codigo_barras,
+                origem: c.origem || ''
+            }));
+            renderizarCodigosFornecedor();
+        } else {
+            codigosFornecedorState = [];
+            renderizarCodigosFornecedor();
+        }
+    } catch (e) {
+        console.error('Erro ao carregar códigos de fornecedor:', e);
+        codigosFornecedorState = [];
+        renderizarCodigosFornecedor();
+    }
 }
 
 function debounceBusca() {
@@ -146,6 +225,9 @@ function abrirModalNovo() {
     document.getElementById('modalProdutoLabel').textContent = 'Novo Produto';
     document.getElementById('btnSalvarProduto').innerHTML = '<i class="bi bi-check-lg me-1"></i>Salvar';
     document.getElementById('ativo').checked = true;
+    codigosFornecedorState = [];
+    document.getElementById('tbodyCodigosFornecedor').innerHTML = '';
+    document.getElementById('codigos_fornecedor').value = '';
 }
 
 async function editarProduto(id) {
@@ -167,7 +249,15 @@ async function editarProduto(id) {
         document.getElementById('produtoId').value = produto.id;
         document.getElementById('nome').value = produto.nome;
         document.getElementById('descricao').value = produto.descricao || '';
+        document.getElementById('codigo_barras').value = produto.codigo_barras || '';
         document.getElementById('categoria_id').value = produto.categoria_id;
+        document.getElementById('unidade_medida').value = produto.unidade_medida;
+        document.getElementById('estoque_minimo').value = produto.estoque_minimo;
+        document.getElementById('localizacao').value = produto.localizacao || '';
+        document.getElementById('ativo').checked = produto.ativo === 1 || produto.ativo === true;
+
+        // Carregar códigos de fornecedor deste produto
+        carregarCodigosFornecedor(produto.id);
         document.getElementById('unidade_medida').value = produto.unidade_medida;
         document.getElementById('estoque_minimo').value = produto.estoque_minimo;
         document.getElementById('localizacao').value = produto.localizacao || '';
@@ -189,6 +279,20 @@ async function salvarProduto(e) {
 
     const id = document.getElementById('produtoId').value;
     const isEdit = id !== '';
+
+    // Validar código de barras antes de salvar (formato e duplicidade)
+    const codigoInput = document.getElementById('codigo_barras');
+    const codigoBarras = codigoInput ? codigoInput.value.trim() : '';
+    if (codigoBarras !== '') {
+        const validacao = window.CodigoBarrasValidacao
+            ? window.CodigoBarrasValidacao.validar(codigoBarras)
+            : { valido: true };
+        if (!validacao.valido) {
+            mostrarToast('Código de barras inválido: ' + validacao.motivo, 'warning');
+            codigoInput.focus();
+            return;
+        }
+    }
 
     const formData = new FormData(e.target);
     const dados = Object.fromEntries(formData.entries());
@@ -227,19 +331,37 @@ async function salvarProduto(e) {
     }
 }
 
-async function excluirProduto(id) {
+async function excluirProduto(id, forcar = false) {
     try {
         const response = await apiFetch('produtos/excluir.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id })
+            body: JSON.stringify({ id, forcar })
         });
 
         const result = await apiJson(response);
 
         if (result.sucesso) {
             carregarProdutos();
-            mostrarToast(result.mensagem || 'Produto excluído com sucesso!', 'success');
+
+            const acao = result.dados?.acao;
+            if (acao === 'desativado') {
+                // Produto possui lotes/movimentações e foi apenas desativado.
+                // Perguntar se o usuário deseja forçar a exclusão permanente.
+                const forcarExclusao = await confirmar(
+                    'Excluir permanentemente?',
+                    'Este produto possui lotes ou movimentações vinculados e foi apenas desativado. Deseja excluí-lo permanentemente (removendo também os vínculos)?',
+                    'Sim, excluir permanentemente',
+                    'danger'
+                );
+                if (forcarExclusao) {
+                    await excluirProduto(id, true);
+                } else {
+                    mostrarToast(result.mensagem || 'Produto desativado.', 'warning');
+                }
+            } else {
+                mostrarToast(result.mensagem || 'Produto excluído com sucesso!', 'success');
+            }
         } else {
             mostrarToast(result.mensagem, 'danger');
         }
@@ -252,6 +374,4 @@ async function logout() {
     await window.logout();
 }
 
-function mostrarToast(mensagem, tipo = 'info') {
-    window.mostrarToast(mensagem, tipo);
-}
+

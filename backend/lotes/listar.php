@@ -21,6 +21,7 @@ try {
         SELECT 
             l.id,
             l.numero_lote,
+            l.codigo_barras_interno,
             l.data_fabricacao,
             l.data_validade,
             l.criado_em,

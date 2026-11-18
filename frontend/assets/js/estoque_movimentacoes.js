@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     carregarProdutosParaFiltro();
     carregarMovimentacoes();
 
-    document.getElementById('btnLogout').addEventListener('click', logout);
+    document.getElementById('btnLogout')?.addEventListener('click', logout);
     document.getElementById('formFiltros').addEventListener('submit', (e) => {
         e.preventDefault();
         paginaAtual = 1;
@@ -61,7 +61,23 @@ async function carregarMovimentacoes() {
         const response = await apiFetch(`estoque/movimentacoes.php?${params.toString()}`);
         const data = await apiJson(response);
 
-        if (!data.sucesso || !data.dados || data.dados.length === 0) {
+        if (response._sessaoExpirada) {
+            mostrarToast(data.mensagem || 'Sessão expirada. Faça login novamente.', 'warning');
+            estadoErro(tbody, 8, data.mensagem || 'Sessão expirada. Faça login novamente.', carregarMovimentacoes);
+            setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+            return;
+        }
+
+        if (!data.sucesso) {
+            estadoErro(tbody, 8, data.mensagem || 'Erro ao carregar movimentações.', carregarMovimentacoes);
+            paginacao.innerHTML = '';
+            paginacaoInfo.textContent = '';
+            return;
+        }
+
+        const dados = Array.isArray(data.dados) ? data.dados : [];
+
+        if (dados.length === 0) {
             estadoVazio(tbody, 8, 'Nenhuma movimentação encontrada');
             paginacao.innerHTML = '';
             paginacaoInfo.textContent = '';
@@ -69,13 +85,13 @@ async function carregarMovimentacoes() {
         }
 
         tbody.innerHTML = '';
-        data.dados.forEach(mov => {
+        dados.forEach(mov => {
             const tr = document.createElement('tr');
 
             tr.appendChild(montarCelula(formatarDataHora(mov.data_movimentacao)));
-            tr.appendChild(montarCelula(`<strong>${escapeHtml(mov.produto_nome)}</strong>`));
+            tr.appendChild(montarCelula(escapeHtml(mov.produto_nome)));
             tr.appendChild(montarCelula(escapeHtml(mov.numero_lote)));
-            tr.appendChild(montarCelula(formatarData(mov.data_validade)));
+            tr.appendChild(montarCelula(formatarDataMov(mov.data_validade)));
 
             const tipoCelula = document.createElement('td');
             tipoCelula.className = 'text-center';
@@ -161,7 +177,7 @@ async function logout() {
     await window.logout();
 }
 
-function formatarData(dataString) {
+function formatarDataMov(dataString) {
     return window.formatarDataCurta(dataString);
 }
 
@@ -176,6 +192,4 @@ function formatarDataHora(dataString) {
     return window.formatarData(dataString, true);
 }
 
-function mostrarToast(mensagem, tipo = 'info') {
-    window.mostrarToast(mensagem, tipo);
-}
+

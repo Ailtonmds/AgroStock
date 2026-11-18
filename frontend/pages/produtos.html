@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/img/favicon-16x16.png">
+    <link rel="shortcut icon" href="../assets/img/favicon.svg">
     <title>Produtos | AgroStock</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
+<<<<<<< HEAD
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-dark agro-navbar">
         <div class="container-fluid px-4">
@@ -29,81 +34,168 @@
                     <li class="nav-item"><a class="nav-link" href="relatorios.html"><i class="bi bi-file-earmark-bar-graph me-1"></i>Relatórios</a></li>
 <li class="nav-item"><button class="nav-link btn btn-link text-white p-0" id="btnLogout"><i class="bi bi-box-arrow-right me-1"></i>Sair</button></li>
                 </ul>
+=======
+<body class="bg-fundo">
+
+    <!-- Sidebar (nav compartilhada) -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-top">
+            <div class="sidebar-brand">
+                <img src="../assets/img/logo.png" alt="Logo AgroStock">
+                <span>AgroStock</span>
+>>>>>>> melhoria-frontend-agrostock
             </div>
+
+            <div class="sidebar-user" id="sidebarUser" title="Usuário logado">
+                <div class="sidebar-user-avatar" id="sidebarUserAvatar">U</div>
+                <div>
+                    <div class="sidebar-user-name" id="sidebarUserNome">Usuário</div>
+                    <div class="sidebar-user-role" id="sidebarUserRole">Almoxarife</div>
+                </div>
+                <i class="bi bi-chevron-down"></i>
+            </div>
+
+            <button class="btn-sidebar-toggle" aria-label="Abrir menu">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
+
+        <div class="sidebar-nav">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Navegação</div>
+                <a class="sidebar-item" href="dashboard.html">
+                    <i class="bi bi-grid"></i>
+                    <span class="sidebar-label">Dashboard</span>
+                </a>
+                <a class="sidebar-item active" href="produtos.html">
+                    <i class="bi bi-box-seam"></i>
+                    <span class="sidebar-label">Produtos</span>
+                </a>
+                <a class="sidebar-item" href="categorias.html">
+                    <i class="bi bi-tags"></i>
+                    <span class="sidebar-label">Categorias</span>
+                </a>
+                <a class="sidebar-item" href="lotes.html">
+                    <i class="bi bi-upc-scan"></i>
+                    <span class="sidebar-label">Lotes</span>
+                </a>
+                <a class="sidebar-item" href="etiquetas.html">
+                    <i class="bi bi-barcode"></i>
+                    <span class="sidebar-label">Etiquetas</span>
+                </a>
+                <a class="sidebar-item" href="estoque.html">
+                    <i class="bi bi-arrow-left-right"></i>
+                    <span class="sidebar-label">Estoque</span>
+                </a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Relatórios</div>
+                <a class="sidebar-item" href="alertas.html">
+                    <i class="bi bi-bell"></i>
+                    <span class="sidebar-label">Alertas</span>
+                    <span class="nav-badge" id="badgeAlertas">0</span>
+                </a>
+                <a class="sidebar-item" href="relatorios.html">
+                    <i class="bi bi-file-earmark-bar-graph"></i>
+                    <span class="sidebar-label">Relatórios</span>
+                </a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Sistema</div>
+                <a class="sidebar-item" href="usuarios.html">
+                    <i class="bi bi-people"></i>
+                    <span class="sidebar-label">Usuários</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <a class="sidebar-footer-item" id="btnLogoutSidebar" href="#">
+                <i class="bi bi-box-arrow-right"></i>
+                <span class="sidebar-label">Sair</span>
+            </a>
         </div>
     </nav>
 
-    <main class="container py-4">
-        <section class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-            <div class="page-header">
-                <span class="badge-pagina">Estoque</span>
-                <h1 class="h3 fw-bold mb-1">Produtos</h1>
-                <p class="text-secondary mb-0">Gerencie os produtos do almoxarifado</p>
-            </div>
-            <button class="btn btn-success px-4" data-bs-toggle="modal" data-bs-target="#modalProduto">
-                <i class="bi bi-plus-lg me-1"></i>Novo produto
-            </button>
-        </section>
+    <!-- Overlay mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-        <!-- Busca e filtros -->
-        <div class="card border-0 shadow-sm mb-4">
-            <div class="card-body p-3 p-md-4">
-                <div class="row g-3 align-items-end">
-                    <div class="col-md-6 col-lg-4">
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-search"></i></span>
-                            <input type="text" class="form-control" id="buscaProduto" placeholder="Buscar por nome...">
+    <!-- Conteúdo principal -->
+    <div class="main-content">
+        <main class="container">
+            <section class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+                <div class="page-header">
+                    <span class="badge-pagina">Estoque</span>
+                    <h1 class="h3 fw-bold mb-1">Produtos</h1>
+                    <p class="text-secondary mb-0">Gerencie os produtos do almoxarifado</p>
+                </div>
+                <button class="btn btn-success px-4" data-bs-toggle="modal" data-bs-target="#modalProduto">
+                    <i class="bi bi-plus-lg me-1"></i>Novo produto
+                </button>
+            </section>
+
+            <!-- Busca e filtros -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-3 p-md-4">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" id="buscaProduto" placeholder="Buscar por nome...">
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-lg-3">
+                            <select class="form-select" id="filtroCategoria">
+                                <option value="">Todas as categorias</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-lg-2">
+                            <select class="form-select" id="filtroStatus">
+                                <option value="">Todos</option>
+                                <option value="1">Ativos</option>
+                                <option value="0">Inativos</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 col-lg-3 d-flex gap-2">
+                            <button class="btn btn-outline-primary w-100" id="btnBuscar"><i class="bi bi-search me-1"></i>Buscar</button>
+                            <button class="btn btn-outline-secondary w-100" id="btnLimparBusca"><i class="bi bi-x-lg me-1"></i>Limpar</button>
                         </div>
                     </div>
-                    <div class="col-md-4 col-lg-3">
-                        <select class="form-select" id="filtroCategoria">
-                            <option value="">Todas as categorias</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2 col-lg-2">
-                        <select class="form-select" id="filtroStatus">
-                            <option value="">Todos</option>
-                            <option value="1">Ativos</option>
-                            <option value="0">Inativos</option>
-                        </select>
-                    </div>
-                    <div class="col-md-12 col-lg-3 d-flex gap-2">
-                        <button class="btn btn-outline-primary w-100" id="btnBuscar"><i class="bi bi-search me-1"></i>Buscar</button>
-                        <button class="btn btn-outline-secondary w-100" id="btnLimparBusca"><i class="bi bi-x-lg me-1"></i>Limpar</button>
-                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Tabela de produtos -->
-        <div class="card border-0 shadow-sm">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="tabelaProdutos">
-                        <thead class="table-light">
-                            <tr>
-                                <th style="width: 22%;">Nome</th>
-                                <th style="width: 16%;">Categoria</th>
-                                <th style="width: 12%;">Unidade</th>
-                                <th style="width: 12%;">Estoque Mín.</th>
-                                <th style="width: 12%;">Qtd. Total</th>
-                                <th style="width: 14%;">Localização</th>
-                                <th style="width: 10%;">Status</th>
-                                <th class="text-end" style="width: 12%;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbodyProdutos">
-                            <tr>
-                                <td colspan="8" class="text-center text-secondary py-4">
-                                    <span class="spinner-border spinner-border-sm me-1"></span> Carregando...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <!-- Tabela de produtos -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0" id="tabelaProdutos">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 22%;">Nome</th>
+                                    <th style="width: 16%;">Categoria</th>
+                                    <th style="width: 12%;">Unidade</th>
+                                    <th style="width: 12%;">Estoque Mín.</th>
+                                    <th style="width: 12%;">Qtd. Total</th>
+                                    <th style="width: 14%;">Localização</th>
+                                    <th style="width: 10%;">Status</th>
+                                    <th class="text-end" style="width: 12%;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyProdutos">
+                                <tr>
+                                    <td colspan="8" class="text-center text-secondary py-4">
+                                        <span class="spinner-border spinner-border-sm me-1"></span> Carregando...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
 
     <!-- Modal Produto -->
     <div class="modal fade" id="modalProduto" tabindex="-1" aria-labelledby="modalProdutoLabel" aria-hidden="true">
@@ -120,6 +212,15 @@
                         <div class="mb-3">
                             <label for="nome" class="form-label fw-semibold">Nome do produto <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="nome" name="nome" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="codigo_barras" class="form-label fw-semibold">Código de Barras do Produto (Fornecedor)</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="codigo_barras" name="codigo_barras" placeholder="Ex: 7891234567890">
+                                <span class="input-group-text"><i class="bi bi-barcode text-muted"></i></span>
+                            </div>
+                            <div class="form-text">Código de barras externo fornecido pelo fabricante (EAN, etc.). Preserva zeros iniciais.</div>
                         </div>
 
                         <div class="row g-3 mb-3">
@@ -166,6 +267,44 @@
                             <input type="checkbox" class="form-check-input" id="ativo" name="ativo" checked>
                             <label class="form-check-label" for="ativo">Ativo</label>
                         </div>
+
+                        <!-- Códigos de fornecedor (múltiplos códigos externos) -->
+                        <div id="codigosFornecedorSection" class="card border-0 shadow-sm mt-4">
+                            <div class="card-header bg-verde-suave">
+                                <h6 class="mb-0 fw-semibold text-verde-escuro"><i class="bi bi-barcode me-1"></i>Códigos do Fornecedor</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-5">
+                                        <label class="form-label fw-semibold small">Código de barras</label>
+                                        <input type="text" class="form-control form-control-sm" id="cf_codigo_barras" placeholder="Ex: 7891234567890">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold small">Origem</label>
+                                        <input type="text" class="form-control form-control-sm" id="cf_origem" placeholder="Ex: Fabricante">
+                                    </div>
+                                    <div class="col-md-3 d-grid">
+                                        <button class="btn btn-success btn-sm" type="button" id="btnAdicionarCodigoFornecedor">
+                                            <i class="bi bi-plus me-1"></i>Adicionar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover mb-0" id="tabelaCodigosFornecedor">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th style="width: 45%;">Código de Barras</th>
+                                                <th style="width: 30%;">Origem</th>
+                                                <th class="text-end" style="width: 25%;">Ação</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbodyCodigosFornecedor"></tbody>
+                                    </table>
+                                </div>
+                                <input type="hidden" name="codigos_fornecedor" id="codigos_fornecedor">
+                            </div>
+                        </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -179,8 +318,51 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/sidebar.js"></script>
     <script src="../assets/js/api.js"></script>
     <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/codigo-barras-validacao.js"></script>
+    <script src="../assets/js/scan-to-input.js"></script>
     <script src="../assets/js/produtos.js"></script>
+    <script>
+        // Bloquear Enter automático do scanner no formulário de produto
+        // e preencher o campo código de barras com a leitura do MDK-101
+        document.addEventListener('DOMContentLoaded', () => {
+            const codigoInput = document.getElementById('codigo_barras');
+            const formProduto = document.getElementById('formProduto');
+
+            let scannerProdutos = new ScanToInput({
+                scanThreshold: 50,
+                minLength: 4,
+                inputSelector: '#codigo_barras',
+                mode: 'overwrite',
+                validation: (code) => window.CodigoBarrasValidacao ? window.CodigoBarrasValidacao.aceitar(code) : true,
+                duplicateTimeout: 1500,
+                busyTimeout: 3000,
+                onScan: (code, input) => {
+                    if (input) {
+                        input.value = code;
+                        input.classList.add('is-valid');
+                    }
+                }
+            });
+
+            // Impedir que o Enter do scanner dispare submit do formulário
+            formProduto.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                }
+            });
+
+            // Evitar submit ao pressionar Enter em qualquer campo do form
+            formProduto.querySelectorAll('input, select, textarea').forEach((el) => {
+                el.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
