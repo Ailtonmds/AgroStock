@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     carregarCategorias();
     carregarProdutos();
 
-    document.getElementById('btnLogout').addEventListener('click', logout);
+    document.getElementById('btnLogout')?.addEventListener('click', logout);
     document.getElementById('formProduto').addEventListener('submit', salvarProduto);
     document.getElementById('btnBuscar').addEventListener('click', carregarProdutos);
     document.getElementById('btnLimparBusca').addEventListener('click', () => {
@@ -56,12 +56,19 @@ function popularSelectCategorias() {
     const selectCategoria = document.getElementById('categoria_id');
     const selectFiltro = document.getElementById('filtroCategoria');
 
-    const options = categoriasCache.filter(c => c.ativo).map(c =>
+    // Select do formulário: mostra todas as categorias (ativa e inativa)
+    // para não bloquear edição de produtos com categoria desativada
+    const optionsForm = categoriasCache.map(c =>
         `<option value="${escapeHtml(c.id)}">${escapeHtml(c.nome)}</option>`
     ).join('');
 
-    selectCategoria.innerHTML = '<option value="">Selecione</option>' + options;
-    selectFiltro.innerHTML = '<option value="">Todas as categorias</option>' + options;
+    // Select de filtro: mostra apenas categorias ativas
+    const optionsFiltro = categoriasCache.filter(c => c.ativo).map(c =>
+        `<option value="${escapeHtml(c.id)}">${escapeHtml(c.nome)}</option>`
+    ).join('');
+
+    selectCategoria.innerHTML = '<option value="">Selecione</option>' + optionsForm;
+    selectFiltro.innerHTML = '<option value="">Todas as categorias</option>' + optionsFiltro;
 }
 
 function renderizarCodigosFornecedor() {
@@ -324,19 +331,37 @@ async function salvarProduto(e) {
     }
 }
 
-async function excluirProduto(id) {
+async function excluirProduto(id, forcar = false) {
     try {
         const response = await apiFetch('produtos/excluir.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id })
+            body: JSON.stringify({ id, forcar })
         });
 
         const result = await apiJson(response);
 
         if (result.sucesso) {
             carregarProdutos();
-            mostrarToast(result.mensagem || 'Produto excluído com sucesso!', 'success');
+
+            const acao = result.dados?.acao;
+            if (acao === 'desativado') {
+                // Produto possui lotes/movimentações e foi apenas desativado.
+                // Perguntar se o usuário deseja forçar a exclusão permanente.
+                const forcarExclusao = await confirmar(
+                    'Excluir permanentemente?',
+                    'Este produto possui lotes ou movimentações vinculados e foi apenas desativado. Deseja excluí-lo permanentemente (removendo também os vínculos)?',
+                    'Sim, excluir permanentemente',
+                    'danger'
+                );
+                if (forcarExclusao) {
+                    await excluirProduto(id, true);
+                } else {
+                    mostrarToast(result.mensagem || 'Produto desativado.', 'warning');
+                }
+            } else {
+                mostrarToast(result.mensagem || 'Produto excluído com sucesso!', 'success');
+            }
         } else {
             mostrarToast(result.mensagem, 'danger');
         }
@@ -349,6 +374,4 @@ async function logout() {
     await window.logout();
 }
 
-function mostrarToast(mensagem, tipo = 'info') {
-    window.mostrarToast(mensagem, tipo);
-}
+

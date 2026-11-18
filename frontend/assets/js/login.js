@@ -55,7 +55,6 @@ if (loginForm) {
             if (data.sucesso) {
                 sessionStorage.setItem('usuario_id', String(data.dados?.id || ''));
                 sessionStorage.setItem('usuario_nome', data.dados?.nome || data.dados?.usuario || 'Usuário');
-                sessionStorage.setItem('nivel_acesso', data.dados?.nivel_acesso || 'operador');
                 window.location.href = 'dashboard.html';
             } else {
                 mensagemErro.textContent = data.mensagem || 'Erro ao fazer login.';

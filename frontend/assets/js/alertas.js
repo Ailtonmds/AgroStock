@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     carregarAlertas();
 
-    document.getElementById('btnLogout').addEventListener('click', logout);
+    document.getElementById('btnLogout')?.addEventListener('click', logout);
     document.getElementById('btnAtualizarAlertas').addEventListener('click', carregarAlertas);
 });
 
@@ -66,7 +66,7 @@ function atualizarTabelaEstoqueBaixo(produtos) {
         const tr = document.createElement('tr');
         tr.className = 'table-warning';
 
-        tr.appendChild(montarCelula(`<strong>${escapeHtml(p.nome)}</strong>`));
+        tr.appendChild(montarCelula(escapeHtml(p.nome)));
         tr.appendChild(montarCelula(escapeHtml(p.categoria_nome)));
 
         const qtdCelula = document.createElement('td');
@@ -95,10 +95,10 @@ function atualizarTabelaProximos(lotes) {
         const tr = document.createElement('tr');
         tr.className = 'table-warning';
 
-        tr.appendChild(montarCelula(`<strong>${escapeHtml(l.produto_nome)}</strong>`));
+        tr.appendChild(montarCelula(escapeHtml(l.produto_nome)));
         tr.appendChild(montarCelula(escapeHtml(l.categoria_nome)));
         tr.appendChild(montarCelula(escapeHtml(l.numero_lote)));
-        tr.appendChild(montarCelula(formatarData(l.data_validade)));
+        tr.appendChild(montarCelula(formatarDataAlerta(l.data_validade)));
 
         const diasCelula = document.createElement('td');
         diasCelula.className = 'text-center';
@@ -127,10 +127,10 @@ function atualizarTabelaVencidos(lotes) {
         const tr = document.createElement('tr');
         tr.className = 'table-danger';
 
-        tr.appendChild(montarCelula(`<strong>${escapeHtml(l.produto_nome)}</strong>`));
+        tr.appendChild(montarCelula(escapeHtml(l.produto_nome)));
         tr.appendChild(montarCelula(escapeHtml(l.categoria_nome)));
         tr.appendChild(montarCelula(escapeHtml(l.numero_lote)));
-        tr.appendChild(montarCelula(formatarData(l.data_validade)));
+        tr.appendChild(montarCelula(formatarDataAlerta(l.data_validade)));
 
         const diasCelula = document.createElement('td');
         diasCelula.className = 'text-center';
@@ -150,10 +150,8 @@ async function logout() {
     await window.logout();
 }
 
-function formatarData(dataString) {
+function formatarDataAlerta(dataString) {
     return window.formatarDataCurta(dataString);
 }
 
-function mostrarToast(mensagem, tipo = 'info') {
-    window.mostrarToast(mensagem, tipo);
-}
+

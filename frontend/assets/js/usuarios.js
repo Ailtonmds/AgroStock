@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     carregarUsuarios();
 
-    document.getElementById('btnLogout').addEventListener('click', logout);
+    document.getElementById('btnLogout')?.addEventListener('click', logout);
     document.getElementById('formUsuario').addEventListener('submit', salvarUsuario);
 
     document.getElementById('modalUsuario').addEventListener('hidden.bs.modal', () => {
@@ -20,13 +20,13 @@ async function carregarUsuarios() {
     const tbody = document.getElementById('tbodyUsuarios');
 
     try {
-        estadoCarregando(tbody, 6);
+        estadoCarregando(tbody, 5);
 
         const response = await apiFetch('usuarios/listar.php');
         const data = await apiJson(response);
 
         if (!data.sucesso || !data.dados || data.dados.length === 0) {
-            estadoVazio(tbody, 6, 'Nenhum usuário encontrado');
+            estadoVazio(tbody, 5, 'Nenhum usuário encontrado');
             return;
         }
 
@@ -37,16 +37,8 @@ async function carregarUsuarios() {
 
             const tr = document.createElement('tr');
 
-            tr.appendChild(montarCelula(`<strong>${escapeHtml(u.nome)}</strong>`));
+            tr.appendChild(montarCelula(escapeHtml(u.nome)));
             tr.appendChild(montarCelula(escapeHtml(u.usuario)));
-
-            const nivelCelula = document.createElement('td');
-            nivelCelula.className = 'text-center';
-            const nivelSpan = document.createElement('span');
-            nivelSpan.className = `badge ${u.nivel_acesso === 'admin' ? 'bg-primary' : 'bg-secondary'}`;
-            nivelSpan.textContent = u.nivel_acesso === 'admin' ? 'Admin' : 'Operador';
-            nivelCelula.appendChild(nivelSpan);
-            tr.appendChild(nivelCelula);
 
             const statusCelula = document.createElement('td');
             statusCelula.className = 'text-center';
@@ -89,7 +81,7 @@ async function carregarUsuarios() {
         });
     } catch (e) {
         console.error('Erro ao carregar usuários:', e);
-        estadoErro(tbody, 6, 'Erro ao carregar usuários. Verifique a conexão e tente novamente.', carregarUsuarios);
+        estadoErro(tbody, 5, 'Erro ao carregar usuários. Verifique a conexão e tente novamente.', carregarUsuarios);
     }
 }
 
@@ -126,7 +118,6 @@ async function editarUsuario(id) {
         document.getElementById('usuarioId').value = usuario.id;
         document.getElementById('nome').value = usuario.nome;
         document.getElementById('usuario').value = usuario.usuario;
-        document.getElementById('nivel_acesso').value = usuario.nivel_acesso;
         document.getElementById('ativo').checked = usuario.ativo === 1 || usuario.ativo === true;
 
         // Senha não é preenchida por segurança
@@ -220,6 +211,4 @@ function formatarDataHora(dataString) {
     return window.formatarData(dataString, true);
 }
 
-function mostrarToast(mensagem, tipo = 'info') {
-    window.mostrarToast(mensagem, tipo);
-}
+

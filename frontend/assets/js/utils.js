@@ -79,7 +79,7 @@
     };
 
     window.formatarDataCurta = function (dataString) {
-        return formatarData(dataString, false);
+        return window.formatarData(dataString, false);
     };
 
     /* ============================================================

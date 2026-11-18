@@ -1,7 +1,7 @@
 // Teste de carga de todas as páginas do frontend após login
 const { test, expect } = require('@playwright/test');
 
-const BASE_URL = 'http://localhost/agrostock/pages';
+const BASE_URL = `${process.env.PLAYWRIGHT_BASE_URL || 'http://localhost/agrostock'}/pages`;
 const LOGIN_URL = `${BASE_URL}/index.html`;
 
 const PAGINAS = [

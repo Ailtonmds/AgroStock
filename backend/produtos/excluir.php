@@ -65,8 +65,8 @@ try {
     }
 
     // Exclusão física (apenas se não houver vínculos ou forçar)
-    if ($forcar) {
-        // Excluir em ordem: produto_lote, depois produto
+    if (!$temLotes && !$temMovimentacoes) {
+        // Não há vínculos: excluir fisicamente
         $pdo->beginTransaction();
         
         $stmt = $pdo->prepare('DELETE FROM produto_lote WHERE produto_id = :id');
@@ -82,17 +82,45 @@ try {
             'mensagem' => 'Produto excluído permanentemente.',
             'dados' => ['acao' => 'excluido']
         ]);
-    } else {
-        // Desativar
-        $stmt = $pdo->prepare('UPDATE produtos SET ativo = 0 WHERE id = :id');
+        exit;
+    }
+
+    if ($forcar) {
+        // Forçar exclusão mesmo com vínculos
+        $pdo->beginTransaction();
+        
+        // Excluir em ordem respeitando chaves estrangeiras:
+        // 1. produto_lote (referencia produtos e lotes)
+        // 2. movimentacoes (referencia produtos, lotes e usuarios)
+        // 3. produtos
+        $stmt = $pdo->prepare('DELETE FROM produto_lote WHERE produto_id = :id');
         $stmt->execute(['id' => $id]);
+        
+        $stmt = $pdo->prepare('DELETE FROM movimentacoes WHERE produto_id = :id');
+        $stmt->execute(['id' => $id]);
+        
+        $stmt = $pdo->prepare('DELETE FROM produtos WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+        
+        $pdo->commit();
 
         echo json_encode([
             'sucesso' => true,
-            'mensagem' => 'Produto desativado.',
-            'dados' => ['acao' => 'desativado']
+            'mensagem' => 'Produto excluído permanentemente (forçado).',
+            'dados' => ['acao' => 'excluido']
         ]);
+        exit;
     }
+
+    // Há vínculos e não forçar: apenas desativar
+    $stmt = $pdo->prepare('UPDATE produtos SET ativo = 0 WHERE id = :id');
+    $stmt->execute(['id' => $id]);
+
+    echo json_encode([
+        'sucesso' => true,
+        'mensagem' => 'Produto desativado (possui lotes/movimentações vinculados).',
+        'dados' => ['acao' => 'desativado']
+    ]);
 } catch (PDOException $e) {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();

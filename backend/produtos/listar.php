@@ -41,8 +41,8 @@ try {
     $params = [];
 
     if ($busca !== '') {
-        $sql .= ' AND (p.nome LIKE :busca OR p.descricao LIKE :busca)';
-        $params['busca'] = "%{$busca}%";
+        $sql .= ' AND p.codigo_barras = :codigo_barras';
+        $params['codigo_barras'] = $busca;
     }
 
     if ($categoria_id > 0) {

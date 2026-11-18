@@ -1,0 +1,83 @@
+<!-- Sidebar (nova nav) -->
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+        <div class="sidebar-brand">
+            <img src="../assets/img/logo.png" alt="Logo AgroStock">
+            <span>AgroStock</span>
+        </div>
+
+        <div class="sidebar-user" id="sidebarUser" title="Usuário logado">
+            <div class="sidebar-user-avatar" id="sidebarUserAvatar">U</div>
+            <div>
+                <div class="sidebar-user-name" id="sidebarUserNome">Usuário</div>
+                <div class="sidebar-user-role" id="sidebarUserRole">Almoxarife</div>
+            </div>
+            <i class="bi bi-chevron-down"></i>
+        </div>
+
+        <button class="btn-sidebar-toggle" id="btnSidebarToggle" aria-label="Abrir menu">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
+
+    <div class="sidebar-nav">
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Navegação</div>
+            <a class="sidebar-item" href="dashboard.html">
+                <i class="bi bi-grid"></i>
+                <span class="sidebar-label">Dashboard</span>
+            </a>
+            <a class="sidebar-item" href="produtos.html">
+                <i class="bi bi-box-seam"></i>
+                <span class="sidebar-label">Produtos</span>
+            </a>
+            <a class="sidebar-item" href="categorias.html">
+                <i class="bi bi-tags"></i>
+                <span class="sidebar-label">Categorias</span>
+            </a>
+            <a class="sidebar-item" href="lotes.html">
+                <i class="bi bi-upc-scan"></i>
+                <span class="sidebar-label">Lotes</span>
+            </a>
+            <a class="sidebar-item" href="etiquetas.html">
+                <i class="bi bi-barcode"></i>
+                <span class="sidebar-label">Etiquetas</span>
+            </a>
+            <a class="sidebar-item" href="estoque.html">
+                <i class="bi bi-arrow-left-right"></i>
+                <span class="sidebar-label">Estoque</span>
+            </a>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Relatórios</div>
+            <a class="sidebar-item" href="alertas.html">
+                <i class="bi bi-bell"></i>
+                <span class="sidebar-label">Alertas</span>
+                <span class="nav-badge" id="badgeAlertas">0</span>
+            </a>
+            <a class="sidebar-item" href="relatorios.html">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                <span class="sidebar-label">Relatórios</span>
+            </a>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Sistema</div>
+            <a class="sidebar-item" href="usuarios.html">
+                <i class="bi bi-people"></i>
+                <span class="sidebar-label">Usuários</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="sidebar-footer">
+        <a class="sidebar-footer-item" id="btnLogoutSidebar" href="#">
+            <i class="bi bi-box-arrow-right"></i>
+            <span class="sidebar-label">Sair</span>
+        </a>
+    </div>
+</nav>
+
+<!-- Overlay mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>

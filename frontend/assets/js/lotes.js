@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     carregarProdutosParaSelect();
     carregarLotes();
 
-    document.getElementById('btnLogout').addEventListener('click', logout);
+    document.getElementById('btnLogout')?.addEventListener('click', logout);
     document.getElementById('formLote').addEventListener('submit', salvarLote);
     document.getElementById('btnAplicarFiltro').addEventListener('click', carregarLotes);
     document.getElementById('btnLimparFiltro').addEventListener('click', () => {
@@ -129,8 +129,8 @@ async function carregarLotes() {
             tr.appendChild(produtoCelula);
             tr.appendChild(montarCelula(l.numero_lote));
             tr.appendChild(montarCelula(l.codigo_barras_interno || '-'));
-            tr.appendChild(montarCelula(l.data_fabricacao ? formatarData(l.data_fabricacao) : '-'));
-            tr.appendChild(montarCelula(formatarData(l.data_validade)));
+            tr.appendChild(montarCelula(l.data_fabricacao ? formatarDataLote(l.data_fabricacao) : '-'));
+            tr.appendChild(montarCelula(formatarDataLote(l.data_validade)));
             tr.appendChild(montarCelula(l.quantidade));
 
             const statusCelula = document.createElement('td');
@@ -257,7 +257,7 @@ async function salvarLote(e) {
             // Se é um novo lote e o código interno foi gerado, exibe a identificação no modal
             if (!isEdit && codigoInterno) {
                 document.getElementById('codigo_barras_interno').value = codigoInterno;
-                document.getElementById('codigo_barras_svg').src = `lotes/codigo_barras.php?id=${dados.lote_id}`;
+                document.getElementById('codigo_barras_svg').src = `/backend/lotes/codigo_barras.php?id=${dados.lote_id}`;
                 document.getElementById('identificacaoCodigoBarras').style.display = '';
                 document.getElementById('btnSalvarLote').innerHTML = '<i class="bi bi-check-lg me-1"></i>Salvar';
                 document.getElementById('btnSalvarLote').disabled = false;
@@ -306,8 +306,14 @@ async function logout() {
     await window.logout();
 }
 
-function formatarData(dataString) {
-    return window.formatarDataCurta(dataString);
+function formatarDataLote(dataString) {
+    if (!dataString) return '-';
+    const data = new Date(dataString);
+    if (isNaN(data.getTime())) return '-';
+    const dia = String(data.getDate()).padStart(2, '0');
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    const ano = data.getFullYear();
+    return `${dia}/${mes}/${ano}`;
 }
 
 function formatarDataInput(data) {
@@ -317,6 +323,4 @@ function formatarDataInput(data) {
     return `${ano}-${mes}-${dia}`;
 }
 
-function mostrarToast(mensagem, tipo = 'info') {
-    window.mostrarToast(mensagem, tipo);
-}
+

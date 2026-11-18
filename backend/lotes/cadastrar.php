@@ -7,9 +7,6 @@
 require_once __DIR__ . '/../config/conexao.php';
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../auth/verificar_sessao.php';
-require_once __DIR__ . '/../Service/CodigoBarrasService.php';
-
-use App\Service\CodigoBarrasService;
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -48,19 +45,39 @@ if ($data_fabricacao !== null && $data_fabricacao !== '' && !DateTime::createFro
     exit;
 }
 
-$codigoBarrasService = new CodigoBarrasService();
+/**
+ * Gera o próximo código interno de lote seguindo o padrão AG00000001.
+ * O número é baseado no maior identificador interno já existente, somando 1.
+ */
+function gerarCodigoInternoLote(\PDO $pdo): string
+{
+    $stmt = $pdo->query("SELECT MAX(codigo_barras_interno) AS ultimo FROM lotes WHERE codigo_barras_interno IS NOT NULL");
+    $row = $stmt->fetch();
+    $ultimo = $row['ultimo'] ?? null;
+
+    $numero = 1;
+    if ($ultimo !== null && $ultimo !== '') {
+        $numerico = preg_replace('/\D/', '', $ultimo);
+        if ($numerico !== '') {
+            $numero = (int) $numerico + 1;
+        }
+    }
+
+    return 'AG' . str_pad((string) $numero, 8, '0', STR_PAD_LEFT);
+}
 
 try {
+    $pdo->beginTransaction();
+
     // Verificar se produto existe
     $stmt = $pdo->prepare('SELECT id FROM produtos WHERE id = :id AND ativo = 1 FOR UPDATE');
     $stmt->execute(['id' => $produto_id]);
     if (!$stmt->fetch()) {
+        $pdo->rollBack();
         http_response_code(404);
         echo json_encode(['sucesso' => false, 'mensagem' => 'Produto não encontrado ou inativo.']);
         exit;
     }
-
-    $pdo->beginTransaction();
 
     // Verificar se lote já existe (número do fabricante)
     $stmt = $pdo->prepare('SELECT id, codigo_barras_interno FROM lotes WHERE numero_lote = :numero_lote FOR UPDATE');
@@ -74,7 +91,7 @@ try {
         // Se o lote existente ainda não possui código interno, gera agora
         if ($codigoInterno === null || $codigoInterno === '') {
             do {
-                $codigoInterno = $codigoBarrasService->gerarCodigoInternoLote($pdo);
+                $codigoInterno = gerarCodigoInternoLote($pdo);
                 // Verificar se já existe (proteção contra concorrência)
                 $chk = $pdo->prepare('SELECT id FROM lotes WHERE codigo_barras_interno = :codigo FOR UPDATE');
                 $chk->execute(['codigo' => $codigoInterno]);
@@ -102,7 +119,7 @@ try {
     } else {
         // Gerar código interno exclusivo antes de criar o lote (protege contra concorrência)
         do {
-            $codigoInterno = $codigoBarrasService->gerarCodigoInternoLote($pdo);
+            $codigoInterno = gerarCodigoInternoLote($pdo);
             $chk = $pdo->prepare('SELECT id FROM lotes WHERE codigo_barras_interno = :codigo FOR UPDATE');
             $chk->execute(['codigo' => $codigoInterno]);
         } while ($chk->fetch());

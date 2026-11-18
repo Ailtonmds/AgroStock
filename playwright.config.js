@@ -7,9 +7,9 @@ module.exports = defineConfig({
         timeout: 10000,
     },
     use: {
-        baseURL: 'http://localhost/agrostock/frontend',
+        baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost/agrostock',
         browserName: 'firefox',
-        headless: true,
+        headless: false,
         viewport: { width: 1280, height: 720 },
         ignoreHTTPSErrors: true,
     },

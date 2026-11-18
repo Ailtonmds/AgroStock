@@ -6,7 +6,7 @@ let chartEntradasSaidas = null;
 document.addEventListener('DOMContentLoaded', async () => {
     await carregarDashboard();
 
-    document.getElementById('btnLogout').addEventListener('click', logout);
+    document.getElementById('btnLogout')?.addEventListener('click', logout);
 });
 
 async function carregarDashboard() {
@@ -15,15 +15,17 @@ async function carregarDashboard() {
         const data = await apiJson(response);
 
         if (!data.sucesso) {
-            mostrarToast(data.mensagem || 'Erro ao carregar dashboard.', 'danger');
+            window.mostrarToast(data.mensagem || 'Erro ao carregar dashboard.', 'danger');
             return;
         }
 
-        const d = data.dados;
+        const d = data.dados || {};
+        d.estatisticas = d.estatisticas || {};
+        d.usuario = d.usuario || {};
+        d.movimentacoes_recentes = Array.isArray(d.movimentacoes_recentes) ? d.movimentacoes_recentes : [];
         const usuario = d.usuario || {};
         if (usuario.id) sessionStorage.setItem('usuario_id', String(usuario.id));
         if (usuario.nome) sessionStorage.setItem('usuario_nome', usuario.nome);
-        if (usuario.nivel_acesso) sessionStorage.setItem('nivel_acesso', usuario.nivel_acesso);
 
         // Atualizar estatísticas
         document.getElementById('statTotalProdutos').textContent = d.estatisticas.total_produtos ?? 0;
@@ -46,7 +48,7 @@ async function carregarDashboard() {
 
     } catch (error) {
         console.error('Erro ao carregar dashboard:', error);
-        mostrarToast('Erro ao carregar dashboard. Verifique a conexão.', 'danger');
+        window.mostrarToast('Erro ao carregar dashboard. Verifique a conexão.', 'danger');
     }
 }
 
@@ -62,7 +64,7 @@ function atualizarTabelaMovimentacoes(movimentacoes) {
     movimentacoes.forEach(mov => {
         const tr = document.createElement('tr');
 
-        tr.appendChild(montarCelula(formatarData(mov.data_movimentacao)));
+        tr.appendChild(montarCelula(window.formatarData(mov.data_movimentacao)));
         tr.appendChild(montarCelula(escapeHtml(mov.produto_nome)));
         tr.appendChild(montarCelula(escapeHtml(mov.numero_lote)));
 
@@ -82,16 +84,21 @@ function atualizarTabelaMovimentacoes(movimentacoes) {
 }
 
 function atualizarGraficos(graficos) {
+    graficos = graficos && typeof graficos === 'object' ? graficos : {};
+    const estoqueCategoria = graficos.estoque_por_categoria || {};
+    const entradasSaidas = graficos.entradas_saidas_30dias || {};
+
     // Gráfico de estoque por categoria (Doughnut)
-    const ctxCat = document.getElementById('chartEstoqueCategoria').getContext('2d');
+    const ctxCat = document.getElementById('chartEstoqueCategoria')?.getContext('2d');
+    if (!ctxCat) return;
     if (chartEstoqueCategoria) chartEstoqueCategoria.destroy();
 
     chartEstoqueCategoria = new Chart(ctxCat, {
         type: 'doughnut',
         data: {
-            labels: graficos.estoque_por_categoria.labels,
+            labels: Array.isArray(estoqueCategoria.labels) ? estoqueCategoria.labels : [],
             datasets: [{
-                data: graficos.estoque_por_categoria.data,
+                data: Array.isArray(estoqueCategoria.data) ? estoqueCategoria.data : [],
                 backgroundColor: [
                     '#1e7a46', '#14532d', '#82d39c', '#123d24',
                     '#4a9c66', '#6ec68a', '#a8e6b8', '#cff2d9'
@@ -112,17 +119,18 @@ function atualizarGraficos(graficos) {
     });
 
     // Gráfico de entradas vs saídas (Line)
-    const ctxMov = document.getElementById('chartEntradasSaidas').getContext('2d');
+    const ctxMov = document.getElementById('chartEntradasSaidas')?.getContext('2d');
+    if (!ctxMov) return;
     if (chartEntradasSaidas) chartEntradasSaidas.destroy();
 
     chartEntradasSaidas = new Chart(ctxMov, {
         type: 'line',
         data: {
-            labels: graficos.entradas_saidas_30dias.labels,
+            labels: Array.isArray(entradasSaidas.labels) ? entradasSaidas.labels : [],
             datasets: [
                 {
                     label: 'Entradas',
-                    data: graficos.entradas_saidas_30dias.entradas,
+                    data: Array.isArray(entradasSaidas.entradas) ? entradasSaidas.entradas : [],
                     borderColor: '#1e7a46',
                     backgroundColor: 'rgba(30, 122, 70, 0.1)',
                     fill: true,
@@ -130,7 +138,7 @@ function atualizarGraficos(graficos) {
                 },
                 {
                     label: 'Saídas',
-                    data: graficos.entradas_saidas_30dias.saidas,
+                    data: Array.isArray(entradasSaidas.saidas) ? entradasSaidas.saidas : [],
                     borderColor: '#dc3545',
                     backgroundColor: 'rgba(220, 53, 69, 0.1)',
                     fill: true,
@@ -151,14 +159,6 @@ function atualizarGraficos(graficos) {
     });
 }
 
-function formatarData(dataString, comHora = true) {
-    return window.formatarData(dataString, comHora);
-}
-
 async function logout() {
     await window.logout();
-}
-
-function mostrarToast(mensagem, tipo = 'info') {
-    window.mostrarToast(mensagem, tipo);
 }

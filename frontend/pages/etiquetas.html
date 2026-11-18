@@ -3,98 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/img/favicon-16x16.png">
+    <link rel="shortcut icon" href="../assets/img/favicon.svg">
     <title>Etiquetas de Código de Barras | AgroStock</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/css/style.css">
-    <style>
-        /* Etiquetas de impressão */
-        .etiqueta {
-            border: 1px solid var(--borda);
-            border-radius: var(--raio-card);
-            padding: 3mm;
-            margin-bottom: 4mm;
-            background: var(--branco);
-            page-break-inside: avoid;
-            font-size: 0.72rem;
-        }
-
-        .etiqueta-50x30 { width: 50mm; min-height: 30mm; }
-        .etiqueta-60x40 { width: 60mm; min-height: 40mm; }
-
-        .etiqueta .agrostock {
-            font-weight: 800;
-            color: var(--verde-escuro);
-            font-size: 0.78rem;
-            letter-spacing: 0.5px;
-        }
-
-        .etiqueta .produto-nome {
-            font-weight: 700;
-            font-size: 0.82rem;
-            margin: 2mm 0 1mm 0;
-            word-break: break-word;
-        }
-
-        .etiqueta .dados-lote {
-            font-size: 0.7rem;
-            color: var(--texto-secundario);
-            margin-bottom: 2mm;
-        }
-
-        .etiqueta .codigo-textual {
-            margin-top: 2mm;
-            font-size: 0.78rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            font-family: 'Courier New', Courier, monospace;
-            text-align: center;
-        }
-
-        .etiqueta .codigo-barras-img {
-            display: block;
-            margin: 0 auto 1mm auto;
-            max-width: 100%;
-            height: auto;
-        }
-
-        /* Ajusta o SVG do código de barras para não deformar */
-        .etiqueta svg {
-            width: 100%;
-            height: auto;
-            max-height: 14mm;
-            display: block;
-            margin: 0 auto;
-        }
-
-        @media print {
-            @page {
-                margin: 0;
-            }
-            body {
-                margin: 0;
-                background: #fff !important;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .etiqueta {
-                border: none;
-                box-shadow: none;
-                margin-bottom: 3mm;
-            }
-            .etiqueta-50x30 { width: 50mm; min-height: 30mm; }
-            .etiqueta-60x40 { width: 60mm; min-height: 40mm; }
-        }
-    </style>
 </head>
 <body class="bg-fundo">
 
-    <!-- Sidebar (estilo Tabler) -->
+    <!-- Sidebar (nav compartilhada) -->
     <nav class="sidebar" id="sidebar">
-        <div class="sidebar-brand">
-            <img src="../assets/img/logo.png" alt="Logo AgroStock">
-            <span>AgroStock</span>
+        <div class="sidebar-top">
+            <div class="sidebar-brand">
+                <img src="../assets/img/logo.png" alt="Logo AgroStock">
+                <span>AgroStock</span>
+            </div>
+
+            <div class="sidebar-user" id="sidebarUser" title="Usuário logado">
+                <div class="sidebar-user-avatar" id="sidebarUserAvatar">U</div>
+                <div>
+                    <div class="sidebar-user-name" id="sidebarUserNome">Usuário</div>
+                    <div class="sidebar-user-role" id="sidebarUserRole">Almoxarife</div>
+                </div>
+                <i class="bi bi-chevron-down"></i>
+            </div>
+
+            <button class="btn-sidebar-toggle" aria-label="Abrir menu">
+                <i class="bi bi-list"></i>
+            </button>
         </div>
 
         <div class="sidebar-nav">
@@ -117,7 +56,7 @@
                     <span class="sidebar-label">Lotes</span>
                 </a>
                 <a class="sidebar-item active" href="etiquetas.html">
-                    <i class="bi bi-tag"></i>
+                    <i class="bi bi-barcode"></i>
                     <span class="sidebar-label">Etiquetas</span>
                 </a>
                 <a class="sidebar-item" href="estoque.html">
@@ -131,6 +70,7 @@
                 <a class="sidebar-item" href="alertas.html">
                     <i class="bi bi-bell"></i>
                     <span class="sidebar-label">Alertas</span>
+                    <span class="nav-badge" id="badgeAlertas">0</span>
                 </a>
                 <a class="sidebar-item" href="relatorios.html">
                     <i class="bi bi-file-earmark-bar-graph"></i>
@@ -157,29 +97,6 @@
 
     <!-- Overlay mobile -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <!-- Topbar -->
-    <header class="topbar" id="topbar">
-        <div class="topbar-left">
-            <button class="btn-sidebar-toggle" id="btnSidebarToggle" aria-label="Abrir menu">
-                <i class="bi bi-list"></i>
-            </button>
-            <div class="page-header-info">
-                <div class="page-title" id="pageTitle">Etiquetas</div>
-                <div class="page-subtitle">Impressão de etiquetas de código de barras</div>
-            </div>
-        </div>
-
-        <div class="topbar-right">
-            <div class="user-badge" id="userBadge">
-                <i class="bi bi-person-circle"></i>
-                <span id="usuarioNomeTopbar">Usuário</span>
-            </div>
-            <button class="btn btn-outline-danger btn-sm" id="btnLogout" title="Sair">
-                <i class="bi bi-box-arrow-right"></i>
-            </button>
-        </div>
-    </header>
 
     <!-- Conteúdo principal -->
     <div class="main-content">
@@ -255,166 +172,9 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/sidebar.js"></script>
     <script src="../assets/js/api.js"></script>
     <script src="../assets/js/utils.js"></script>
-    <script>
-        // Dados dos lotes para etiquetas
-        let lotesEtiqueta = [];
-
-        // Formato atual da etiqueta
-        let formatoAtual = '50x30';
-
-        const formatoSelect = document.getElementById('formatoEtiqueta');
-        const tbody = document.getElementById('tbodyEtiquetas');
-        const container = document.getElementById('containerEtiquetas');
-        const areaEtiquetas = document.getElementById('areaEtiquetas');
-
-        async function carregarLotes() {
-            try {
-                const response = await apiFetch('lotes/listar.php');
-                const data = await apiJson(response);
-
-                if (!data.sucesso || !data.dados || data.dados.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-secondary py-5">Nenhum lote cadastrado.</td></tr>';
-                    return;
-                }
-
-                lotesEtiqueta = data.dados;
-                renderTabela();
-            } catch (e) {
-                console.error('Erro ao carregar lotes para etiquetas:', e);
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger py-5">Erro ao carregar lotes.</td></tr>';
-            }
-        }
-
-        function renderTabela() {
-            tbody.innerHTML = '';
-            lotesEtiqueta.forEach(l => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${escapeHtml(l.produto_nome)}</strong></td>
-                    <td>${escapeHtml(l.numero_lote)}</td>
-                    <td>${escapeHtml(l.codigo_barras_interno || '-')}</td>
-                    <td>${l.data_validade ? formatarDataCurta(l.data_validade) : '-'}</td>
-                    <td>${l.quantidade}</td>
-                    <td class="text-end">
-                        ${l.codigo_barras_interno
-                            ? `<button class="btn btn-outline-success btn-sm" onclick="gerarEtiqueta(${l.id})" title="Gerar etiqueta"><i class="bi bi-barcode"></i></button>`
-                            : `<span class="text-muted small" title="Sem código interno"><i class="bi bi-barcode"></i>–</span>`}
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        async function gerarEtiqueta(loteId) {
-            const lote = lotesEtiqueta.find(l => l.id === loteId);
-            if (!lote) return;
-
-            // Monta o container de etiquetas com esta etiqueta
-            container.innerHTML = '';
-            container.appendChild(montarEtiqueta(lote, formatoAtual));
-            areaEtiquetas.style.display = '';
-            areaEtiquetas.scrollIntoView({ behavior: 'smooth' });
-        }
-
-        document.getElementById('btnVisualizarTodos').addEventListener('click', () => {
-            container.innerHTML = '';
-            const validos = lotesEtiqueta.filter(l => l.codigo_barras_interno);
-            if (validos.length === 0) {
-                mostrarToast('Nenhum lote possui código de barras interno.', 'warning');
-                return;
-            }
-            validos.forEach(l => container.appendChild(montarEtiqueta(l, formatoAtual)));
-            areaEtiquetas.style.display = '';
-        });
-
-        formatoSelect.addEventListener('change', () => {
-            formatoAtual = formatoSelect.value;
-            // Re-renderiza se houver etiquetas visíveis
-            if (areaEtiquetas.style.display !== 'none' && container.children.length > 0) {
-                const ids = Array.from(container.querySelectorAll('.etiqueta')).map(el => el.dataset.loteId);
-                container.innerHTML = '';
-                lotesEtiqueta.filter(l => ids.includes(String(l.id))).forEach(l => {
-                    container.appendChild(montarEtiqueta(l, formatoAtual));
-                });
-            }
-        });
-
-        function montarEtiqueta(lote, formato) {
-            const div = document.createElement('div');
-            div.className = `etiqueta ${formato === '60x40' ? 'etiqueta-60x40' : 'etiqueta-50x30'}`;
-            div.dataset.loteId = lote.id;
-
-            const produto = escapeHtml(lote.produto_nome);
-            const numeroLote = escapeHtml(lote.numero_lote);
-            const codigoInterno = escapeHtml(lote.codigo_barras_interno);
-            const validade = lote.data_validade ? formatarDataCurta(lote.data_validade) : '-';
-            const quantidade = lote.quantidade;
-            const svgUrl = `../../backend/lotes/codigo_barras.php?id=${lote.id}`;
-
-            div.innerHTML = `
-                <div class="agrostock">AGROSTOCK</div>
-                <div class="produto-nome">${produto}</div>
-                <div class="dados-lote">
-                    <strong>Lote:</strong> ${numeroLote} &nbsp;|&nbsp;
-                    <strong>Validade:</strong> ${validade} &nbsp;|&nbsp;
-                    <strong>Qtd:</strong> ${quantidade}
-                </div>
-                <img class="codigo-barras-img" src="${svgUrl}" alt="Código de barras ${codigoInterno}">
-                <div class="codigo-textual">${codigoInterno}</div>
-            `;
-            return div;
-        }
-
-        document.getElementById('btnFecharEtiquetas').addEventListener('click', () => {
-            areaEtiquetas.style.display = 'none';
-            container.innerHTML = '';
-        });
-
-        function imprimir() {
-            window.print();
-        }
-
-        document.getElementById('btnImprimir').addEventListener('click', imprimir);
-        document.getElementById('btnImprimirEtiquetas').addEventListener('click', imprimir);
-
-        // Inicialização da sidebar (menu mobile)
-        const sidebar = document.getElementById('sidebar');
-        const btnSidebarToggle = document.getElementById('btnSidebarToggle');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        const btnLogoutSidebar = document.getElementById('btnLogoutSidebar');
-
-        function toggleSidebar() {
-            sidebar.classList.toggle('show');
-            sidebarOverlay.classList.toggle('show');
-        }
-
-        btnSidebarToggle.addEventListener('click', toggleSidebar);
-        sidebarOverlay.addEventListener('click', toggleSidebar);
-
-        document.querySelectorAll('.sidebar-item').forEach(item => {
-            item.addEventListener('click', () => {
-                if (window.innerWidth <= 991) {
-                    sidebar.classList.remove('show');
-                    sidebarOverlay.classList.remove('show');
-                }
-            });
-        });
-
-        btnLogoutSidebar.addEventListener('click', (e) => {
-            e.preventDefault();
-            logout();
-        });
-
-        const nome = sessionStorage.getItem('usuario_nome') || 'Usuário';
-        document.getElementById('usuarioNomeTopbar').textContent = nome;
-
-        carregarLotes();
-
-        async function logout() {
-            await window.logout();
-        }
-    </script>
+    <script src="../assets/js/etiquetas.js"></script>
 </body>
 </html>

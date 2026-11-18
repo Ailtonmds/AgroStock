@@ -13,8 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     exit;
 }
 
-exigir_nivel_acesso(['admin']);
-
 try {
     $stmt = $pdo->query('SELECT id, nome, usuario, nivel_acesso, ativo, criado_em FROM usuarios ORDER BY nome');
     $usuarios = $stmt->fetchAll();

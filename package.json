@@ -4,7 +4,9 @@
   "description": "Aplicação web para gerenciamento de produtos, categorias, lotes, estoque, movimentações, alertas, relatórios e usuários.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "playwright test",
+    "test:scanner": "playwright test tests/scanner.test.js",
+    "test:pages": "playwright test tests/paginas.test.js"
   },
   "repository": {
     "type": "git",

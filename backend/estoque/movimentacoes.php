@@ -33,6 +33,18 @@ if ($limite === false || $pagina === false) {
     exit;
 }
 
+if ($limite > 100) {
+    http_response_code(422);
+    echo json_encode(['sucesso' => false, 'mensagem' => 'O limite máximo permitido é 100 registros por página.']);
+    exit;
+}
+
+if ($tipo !== '' && !in_array($tipo, ['entrada', 'saida'], true)) {
+    http_response_code(422);
+    echo json_encode(['sucesso' => false, 'mensagem' => 'Tipo de movimentação inválido.']);
+    exit;
+}
+
 $offset = ($pagina - 1) * $limite;
 
 try {

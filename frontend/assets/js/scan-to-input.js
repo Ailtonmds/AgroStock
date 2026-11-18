@@ -144,41 +144,44 @@ class ScanToInput {
     // Se captura desabilitada ou pausada, não intercepta nada.
     if (!this.ativo || this.pausado) return;
 
+    const now = Date.now();
+    const char = event.key;
+
+    // ---------------------------------------------------------------
+    // Enter do scanner: finaliza a leitura e processa o código acumulado.
+    // Sempre prevenimos o comportamento padrão do Enter quando o scanner
+    // está ativo, para evitar submit acidental de formulários e "enter
+    // automático" indesejado nos campos.
+    // ---------------------------------------------------------------
+    if (char === 'Enter') {
+      event.preventDefault(); // nunca deixa o navegador tratar o Enter
+      if (this.buffer.length >= this.config.minLength) {
+        clearTimeout(this.scanTimeout);
+        this._processarLeitura(this.buffer);
+      }
+      this.buffer = '';
+      this.lastCharTime = now;
+      return;
+    }
+
+    // Tab também pode ser usado como finalizador por alguns leitores.
+    if (char === 'Tab') {
+      event.preventDefault(); // nunca deixa o navegador tratar o Tab
+      if (this.buffer.length >= this.config.minLength) {
+        clearTimeout(this.scanTimeout);
+        this._processarLeitura(this.buffer);
+      }
+      this.buffer = '';
+      this.lastCharTime = now;
+      return;
+    }
+
     // Não interfere na digitação manual em campos interativos.
     if (this._isCampoInterativoFocado(event.target)) {
       // Limpa buffer se o usuário estiver digitando manualmente em um campo,
       // evitando que caracteres digitados à mão sejam acumulados como scan.
       this.buffer = '';
       clearTimeout(this.scanTimeout);
-      return;
-    }
-
-    const now = Date.now();
-    const char = event.key;
-
-    // ---------------------------------------------------------------
-    // Enter do scanner: finaliza a leitura e processa o código acumulado.
-    // ---------------------------------------------------------------
-    if (char === 'Enter') {
-      if (this.buffer.length >= this.config.minLength) {
-        clearTimeout(this.scanTimeout);
-        this._processarLeitura(this.buffer);
-      }
-      this.buffer = '';
-      this.lastCharTime = now;
-      event.preventDefault();
-      return;
-    }
-
-    // Tab também pode ser usado como finalizador por alguns leitores.
-    if (char === 'Tab') {
-      if (this.buffer.length >= this.config.minLength) {
-        clearTimeout(this.scanTimeout);
-        this._processarLeitura(this.buffer);
-      }
-      this.buffer = '';
-      this.lastCharTime = now;
-      event.preventDefault();
       return;
     }
 

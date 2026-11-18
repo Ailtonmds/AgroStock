@@ -91,18 +91,12 @@ class CodigoBarrasValidacao {
   static _validarDigitoVerificadorEAN(codigo) {
     const digitos = codigo.split('').map(Number);
     const verificador = digitos.pop();
+    // EAN: da esquerda para a direita, posições ímpares (1,3,5...) multiplicam por 1,
+    // posições pares (2,4,6...) multiplicam por 3.
     let soma = 0;
-    digitos.forEach((d, i) => {
-      // Posições ímpares (a partir da direita, 1-indexadas) multiplicam por 1,
-      // pares multiplicam por 3. Como removemos o último, iteramos da direita.
-    });
-    // Implementação padrão: da direita para a esquerda (excluindo o DV),
-    // multiplicar alternadamente 1 e 3, começando com 1 na posição imediatamente
-    // à esquerda do DV.
-    const invertidos = digitos.slice().reverse();
-    for (let i = 0; i < invertidos.length; i++) {
-      const multiplicador = i % 2 === 0 ? 1 : 3;
-      soma += invertidos[i] * multiplicador;
+    for (let i = 0; i < digitos.length; i++) {
+      const multiplicador = (i + 1) % 2 === 1 ? 1 : 3;
+      soma += digitos[i] * multiplicador;
     }
     const calculado = (10 - (soma % 10)) % 10;
     return calculado === verificador;

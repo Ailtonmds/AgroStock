@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     carregarProdutosParaFiltro();
     carregarMovimentacoes();
 
-    document.getElementById('btnLogout').addEventListener('click', logout);
+    document.getElementById('btnLogout')?.addEventListener('click', logout);
     document.getElementById('formFiltros').addEventListener('submit', (e) => {
         e.preventDefault();
         paginaAtual = 1;
@@ -89,9 +89,9 @@ async function carregarMovimentacoes() {
             const tr = document.createElement('tr');
 
             tr.appendChild(montarCelula(formatarDataHora(mov.data_movimentacao)));
-            tr.appendChild(montarCelula(`<strong>${escapeHtml(mov.produto_nome)}</strong>`));
+            tr.appendChild(montarCelula(escapeHtml(mov.produto_nome)));
             tr.appendChild(montarCelula(escapeHtml(mov.numero_lote)));
-            tr.appendChild(montarCelula(formatarData(mov.data_validade)));
+            tr.appendChild(montarCelula(formatarDataMov(mov.data_validade)));
 
             const tipoCelula = document.createElement('td');
             tipoCelula.className = 'text-center';
@@ -177,7 +177,7 @@ async function logout() {
     await window.logout();
 }
 
-function formatarData(dataString) {
+function formatarDataMov(dataString) {
     return window.formatarDataCurta(dataString);
 }
 
@@ -192,6 +192,4 @@ function formatarDataHora(dataString) {
     return window.formatarData(dataString, true);
 }
 
-function mostrarToast(mensagem, tipo = 'info') {
-    window.mostrarToast(mensagem, tipo);
-}
+

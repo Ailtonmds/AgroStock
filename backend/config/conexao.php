@@ -9,11 +9,11 @@ if (realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) {
  * Configuração centralizada para todo o backend
  */
 
-$host = '127.0.0.1';
-$port = '3306';
-$db = 'almoxarifado';
-$user = 'ailton';
-$pass = 'cruzeiro';
+$host = getenv('DB_HOST') ?: '127.0.0.1';
+$port = getenv('DB_PORT') ?: '3306';
+$db = getenv('DB_DATABASE') ?: 'almoxarifado';
+$user = getenv('DB_USERNAME') ?: 'ailton';
+$pass = getenv('DB_PASSWORD') ?: 'cruzeiro';
 
 $dsnServidor = "mysql:host={$host};port={$port};charset=utf8mb4";
 $opcoes = [

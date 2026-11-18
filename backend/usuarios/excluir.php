@@ -14,8 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-exigir_nivel_acesso(['admin']);
-
 $input = json_decode(file_get_contents('php://input'), true);
 if ($input === null) {
     $input = $_POST;

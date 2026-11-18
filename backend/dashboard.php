@@ -156,7 +156,7 @@ try {
             'usuario' => [
                 'id' => (int) $_SESSION['usuario_id'],
                 'nome' => $_SESSION['nome'] ?? $_SESSION['usuario'] ?? 'Usuário',
-                'nivel_acesso' => $_SESSION['nivel_acesso'] ?? 'operador'
+                'nivel_acesso' => $_SESSION['nivel_acesso'] ?? 'usuario'
             ],
             'estatisticas' => [
                 'total_produtos' => $totalProdutos,

@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     inicializarLeitorCodigoBarras();
     inicializarFeedbackScanner();
 
-    document.getElementById('btnLogout').addEventListener('click', logout);
+    document.getElementById('btnLogout')?.addEventListener('click', logout);
     document.getElementById('formEntrada').addEventListener('submit', registrarEntrada);
     document.getElementById('btnLimparForm').addEventListener('click', limparFormulario);
     document.getElementById('btnBuscarPorCodigo').addEventListener('click', buscarProdutoPorCodigoManual);
@@ -219,9 +219,32 @@ async function buscarProdutoPorCodigo(codigo = null, doScan = false) {
             mostrarToast(`Código interno do lote: ${lote.codigo_barras_interno}. Lote "${lote.numero_lote}" selecionado.`, 'info');
 
         } else {
-            // Código do fornecedor ou do produto: localizar o produto, usuário escolhe o lote
+            // Código do fornecedor ou do produto: selecionar automaticamente o primeiro lote com estoque
             const produto = dados.produto;
             await selecionarProduto(produto.id, produto.nome, produto.unidade_medida);
+
+            // Carregar lotes do produto e selecionar o primeiro com estoque > 0
+            const responseLotes = await apiFetch(`lotes/listar.php?produto_id=${produto.id}`);
+            const dataLotes = await apiJson(responseLotes);
+
+            if (dataLotes.sucesso && dataLotes.dados && dataLotes.dados.length > 0) {
+                const lotesComEstoque = dataLotes.dados.filter(l => (parseInt(l.quantidade) || 0) > 0);
+                if (lotesComEstoque.length > 0) {
+                    const lote = lotesComEstoque[0];
+                    const loteSelect = document.getElementById('lote_id');
+                    loteSelect.disabled = false;
+                    loteSelect.innerHTML = '<option value="">Selecione um lote</option>' +
+                        dataLotes.dados.map(l => {
+                            const vencido = new Date(l.data_validade || '9999-12-31') < new Date();
+                            const classe = vencido ? 'text-danger' : '';
+                            return `<option value="${escapeHtml(l.id)}" data-qtd="${escapeHtml(l.quantidade)}" data-val="${escapeHtml(l.data_validade)}" class="${classe}">
+                                ${escapeHtml(l.numero_lote)} (Qtd: ${escapeHtml(l.quantidade)})${l.data_validade ? ' - Val: ' + escapeHtml(l.data_validade) : ''}
+                            </option>`;
+                        }).join('');
+                    loteSelect.value = lote.id;
+                    loteSelect.dispatchEvent(new Event('change'));
+                }
+            }
 
             const origem = tipo === 'fornecedor' ? ' (código do fornecedor)' : '';
             feedback.produtoEncontrado({
@@ -230,7 +253,7 @@ async function buscarProdutoPorCodigo(codigo = null, doScan = false) {
                 estoque: dados.lotes ? dados.lotes.reduce((s, l) => s + (parseInt(l.quantidade) || 0), 0) : 0,
                 tipo
             });
-            mostrarToast(`Produto encontrado: ${produto.nome}${origem}. Selecione o lote e informe a quantidade.`, 'info');
+            mostrarToast(`Produto encontrado: ${produto.nome}${origem}. Lote selecionado automaticamente. Informe a quantidade.`, 'info');
         }
 
         codigoInput.classList.remove('is-invalid');
@@ -356,7 +379,7 @@ document.getElementById('lote_id').addEventListener('change', function () {
     const val = option.dataset.val;
 
     document.getElementById('quantidade_disponivel').value = qtd ? `${qtd} unidades` : '';
-    document.getElementById('validade_lote').value = val ? formatarData(val) : '';
+    document.getElementById('validade_lote').value = val ? formatarDataEntrada(val) : '';
 });
 
 /* ========================================================================
@@ -505,6 +528,6 @@ async function logout() {
     await window.logout();
 }
 
-function formatarData(dataString) {
+function formatarDataEntrada(dataString) {
     return window.formatarDataCurta(dataString);
 }

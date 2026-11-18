@@ -13,8 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-exigir_nivel_acesso(['admin']);
-
 $input = json_decode(file_get_contents('php://input'), true);
 if ($input === null) {
     $input = $_POST;
@@ -23,7 +21,7 @@ if ($input === null) {
 $nome = trim($input['nome'] ?? '');
 $usuario = trim($input['usuario'] ?? '');
 $senha = $input['senha'] ?? '';
-$nivel_acesso = $input['nivel_acesso'] ?? 'operador';
+$nivel_acesso = $input['nivel_acesso'] ?? 'usuario';
 
 if ($nome === '' || $usuario === '' || $senha === '') {
     http_response_code(422);
@@ -34,12 +32,6 @@ if ($nome === '' || $usuario === '' || $senha === '') {
 if (strlen($senha) < 6) {
     http_response_code(422);
     echo json_encode(['sucesso' => false, 'mensagem' => 'Senha deve ter pelo menos 6 caracteres.']);
-    exit;
-}
-
-if (!in_array($nivel_acesso, ['admin', 'operador'])) {
-    http_response_code(422);
-    echo json_encode(['sucesso' => false, 'mensagem' => 'Nível de acesso inválido.']);
     exit;
 }
 

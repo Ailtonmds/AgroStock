@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/img/favicon-16x16.png">
+    <link rel="shortcut icon" href="../assets/img/favicon.svg">
     <title>Criar Usuário | AgroStock</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -42,16 +46,6 @@
                         <input type="password" class="form-control" id="senha" name="senha" minlength="6" required autocomplete="new-password">
                     </div>
                     <div class="form-text">Mínimo 6 caracteres</div>
-                </div>
-                <div class="mb-3">
-                    <label for="nivel_acesso" class="form-label">Nível de acesso</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="bi bi-shield"></i></span>
-                        <select class="form-select" id="nivel_acesso" name="nivel_acesso">
-                            <option value="admin">Administrador</option>
-                            <option value="operador">Operador</option>
-                        </select>
-                    </div>
                 </div>
                 <div id="mensagemErro" class="alert alert-danger d-none small"></div>
                 <div id="mensagemSucesso" class="alert alert-success d-none small"></div>

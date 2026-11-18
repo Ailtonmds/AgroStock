@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     carregarCategorias();
 
-    document.getElementById('btnLogout').addEventListener('click', logout);
+    document.getElementById('btnLogout')?.addEventListener('click', logout);
     document.getElementById('formCategoria').addEventListener('submit', salvarCategoria);
 
     document.getElementById('modalCategoria').addEventListener('hidden.bs.modal', () => {
@@ -182,6 +182,4 @@ async function logout() {
     await window.logout();
 }
 
-function mostrarToast(mensagem, tipo = 'info') {
-    window.mostrarToast(mensagem, tipo);
-}
+

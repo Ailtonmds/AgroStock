@@ -13,8 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-exigir_nivel_acesso(['admin']);
-
 $input = json_decode(file_get_contents('php://input'), true);
 if ($input === null) {
     $input = $_POST;
@@ -24,18 +22,12 @@ $id = (int) ($input['id'] ?? 0);
 $nome = trim($input['nome'] ?? '');
 $usuario = trim($input['usuario'] ?? '');
 $senha = $input['senha'] ?? ''; // Opcional
-$nivel_acesso = $input['nivel_acesso'] ?? 'operador';
+$nivel_acesso = $input['nivel_acesso'] ?? 'usuario';
 $ativo = isset($input['ativo']) ? (bool) $input['ativo'] : true;
 
 if ($id <= 0 || $nome === '' || $usuario === '') {
     http_response_code(422);
     echo json_encode(['sucesso' => false, 'mensagem' => 'ID, nome e usuário são obrigatórios.']);
-    exit;
-}
-
-if (!in_array($nivel_acesso, ['admin', 'operador'])) {
-    http_response_code(422);
-    echo json_encode(['sucesso' => false, 'mensagem' => 'Nível de acesso inválido.']);
     exit;
 }
 
